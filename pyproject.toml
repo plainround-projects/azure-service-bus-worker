@@ -1,0 +1,103 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-service-bus-worker"
+version = "0.1.0"
+description = "An Azure Service Bus order worker that shows duplicates from lock expiry, per-customer ordering with sessions and poison messages on purpose, with its dead-letter replay tool and the Azure infrastructure as Terraform."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Sumit Srivastava" }]
+dependencies = [
+    "azure-identity>=1.19,<2",
+    "azure-servicebus>=7.13,<8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<10",
+    "pytest-cov>=5",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "import-linter>=2.0",
+    "pip-audit>=2.7",
+]
+
+[project.scripts]
+order-produce = "order_worker.interfaces.produce_cli:main"
+order-worker = "order_worker.interfaces.worker_cli:main"
+order-dlq = "order_worker.interfaces.dlq_cli:main"
+order-check = "order_worker.interfaces.check_cli:main"
+order-simulate = "order_worker.interfaces.simulate_cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "N", "C4", "RUF", "PT", "D100", "D101", "D103", "D104"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+
+# Test functions are named for the behavior they check; annotating every one adds noise, not safety.
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "integration: the real SQLite ledger on disk, concurrent processes included",
+    "e2e: the lesson's three failures through the command-line programs on the simulated broker",
+    "azure: needs a deployed Service Bus namespace and an `az login` session (make test-azure)",
+]
+
+[tool.coverage.run]
+source = ["order_worker"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+
+[tool.importlinter]
+root_package = "order_worker"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Layers: interfaces -> infrastructure -> application -> domain, never upward"
+type = "layers"
+layers = [
+    "order_worker.interfaces",
+    "order_worker.infrastructure",
+    "order_worker.application",
+    "order_worker.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "Domain and application know nothing about Azure or SQLite"
+type = "forbidden"
+source_modules = ["order_worker.domain", "order_worker.application"]
+forbidden_modules = ["azure", "sqlite3"]
+
+[[tool.importlinter.contracts]]
+name = "Only the infrastructure layer imports the Azure SDK"
+type = "forbidden"
+source_modules = ["order_worker.interfaces"]
+forbidden_modules = ["azure"]
+allow_indirect_imports = true

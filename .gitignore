@@ -1,0 +1,28 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.import_linter_cache/
+.coverage
+.env
+.DS_Store
+.omc/
+logs/
+
+# Terraform: providers and state stay out of git; the lock file (.terraform.lock.hcl) is committed.
+.terraform/
+*.tfstate
+*.tfstate.*
+data/
+*.tfvars
+!*.tfvars.example
+backend.hcl
+.tflint.d/
+
+# Only the environment pins provider versions (its lock file is committed); module test runs create throwaway locks.
+infra/modules/*/.terraform.lock.hcl
