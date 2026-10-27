@@ -8,6 +8,8 @@ Documentation formats (Markdown and Mermaid in the README and ARCHITECTURE files
 
 Every file follows the same nine headings: what it is, why this repository uses it, where it appears, how it works underneath, a walkthrough of this repository's own files, things to try, common mistakes, five questions with answers, and the official documentation.
 
+The walkthrough of each note has two parts. The first explains the key ideas with chosen quotes. The second, under the heading "Every line, in order", quotes every non-blank line of every code and configuration file that note is responsible for, in blocks with their line numbers, and explains each block. Ideas such as a process, a port, an environment variable, a transaction or a certificate are explained the first time a block needs them.
+
 ## The files
 
 | File | Its role in this repository |
@@ -85,3 +87,120 @@ Read these three, in this order:
 - [Azure Service Bus](azure-service-bus.md)
 - [azure-servicebus (and azure-identity)](azure-servicebus.md)
 - [SQLite](sqlite.md)
+
+## Where every file is explained, line by line
+
+Every code and configuration file of the repository is explained line by line in exactly one of the notes (the section "Every line, in order"). Files that are not listed here are documentation (Markdown), the license, generated lock files (the format is explained in the notes on lock files), or an example environment file that is described by its purpose only.
+
+| File | Non-blank lines | Explained in |
+|---|---|---|
+| `.checkov.yaml` | 14 | [checkov.md](checkov.md) |
+| `.dockerignore` | 19 | [docker.md](docker.md) |
+| `.editorconfig` | 14 | [editorconfig.md](editorconfig.md) |
+| `.github/workflows/ci.yml` | 41 | [github-actions.md](github-actions.md) |
+| `.gitignore` | 26 | [git.md](git.md) |
+| `.tflint.hcl` | 13 | [tflint.md](tflint.md) |
+| `Dockerfile` | 26 | [docker.md](docker.md) |
+| `Makefile` | 111 | [make.md](make.md) |
+| `infra/environments/dev/backend.hcl.example` | 7 | [terraform.md](terraform.md) |
+| `infra/environments/dev/main.tf` | 150 | [terraform.md](terraform.md) |
+| `infra/environments/dev/outputs.tf` | 60 | [terraform.md](terraform.md) |
+| `infra/environments/dev/providers.tf` | 12 | [terraform-providers.md](terraform-providers.md) |
+| `infra/environments/dev/terraform.tfvars.example` | 23 | [terraform.md](terraform.md) |
+| `infra/environments/dev/tests/dev.tftest.hcl` | 163 | [terraform.md](terraform.md) |
+| `infra/environments/dev/variables.tf` | 125 | [terraform.md](terraform.md) |
+| `infra/environments/dev/versions.tf` | 16 | [terraform-providers.md](terraform-providers.md) |
+| `infra/modules/budget/main.tf` | 19 | [azure-resources-and-budgets.md](azure-resources-and-budgets.md) |
+| `infra/modules/budget/outputs.tf` | 4 | [terraform.md](terraform.md) |
+| `infra/modules/budget/tests/budget.tftest.hcl` | 29 | [terraform.md](terraform.md) |
+| `infra/modules/budget/variables.tf` | 41 | [terraform.md](terraform.md) |
+| `infra/modules/budget/versions.tf` | 9 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/main.tf` | 18 | [azure-container-registry.md](azure-container-registry.md) |
+| `infra/modules/container_registry/outputs.tf` | 12 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/tests/container_registry.tftest.hcl` | 20 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/variables.tf` | 30 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/versions.tf` | 9 | [terraform.md](terraform.md) |
+| `infra/modules/log_analytics/main.tf` | 8 | [azure-monitor-log-analytics.md](azure-monitor-log-analytics.md) |
+| `infra/modules/log_analytics/outputs.tf` | 12 | [terraform.md](terraform.md) |
+| `infra/modules/log_analytics/tests/log_analytics.tftest.hcl` | 20 | [terraform.md](terraform.md) |
+| `infra/modules/log_analytics/variables.tf` | 26 | [terraform.md](terraform.md) |
+| `infra/modules/log_analytics/versions.tf` | 9 | [terraform.md](terraform.md) |
+| `infra/modules/role_assignments/main.tf` | 9 | [azure-managed-identity-rbac.md](azure-managed-identity-rbac.md) |
+| `infra/modules/role_assignments/outputs.tf` | 10 | [terraform.md](terraform.md) |
+| `infra/modules/role_assignments/tests/role_assignments.tftest.hcl` | 87 | [terraform.md](terraform.md) |
+| `infra/modules/role_assignments/variables.tf` | 31 | [terraform.md](terraform.md) |
+| `infra/modules/role_assignments/versions.tf` | 9 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/main.tf` | 75 | [azure-service-bus.md](azure-service-bus.md) |
+| `infra/modules/servicebus/outputs.tf` | 20 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/tests/servicebus.tftest.hcl` | 85 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/variables.tf` | 50 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/versions.tf` | 9 | [terraform.md](terraform.md) |
+| `infra/modules/user_assigned_identity/main.tf` | 6 | [azure-managed-identity-rbac.md](azure-managed-identity-rbac.md) |
+| `infra/modules/user_assigned_identity/outputs.tf` | 16 | [terraform.md](terraform.md) |
+| `infra/modules/user_assigned_identity/tests/user_assigned_identity.tftest.hcl` | 14 | [terraform.md](terraform.md) |
+| `infra/modules/user_assigned_identity/variables.tf` | 17 | [terraform.md](terraform.md) |
+| `infra/modules/user_assigned_identity/versions.tf` | 9 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/main.tf` | 74 | [azure-container-apps.md](azure-container-apps.md) |
+| `infra/modules/worker_app/outputs.tf` | 8 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/tests/worker_app.tftest.hcl` | 102 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/variables.tf` | 93 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/versions.tf` | 9 | [terraform.md](terraform.md) |
+| `pyproject.toml` | 87 | [pyproject-toml.md](pyproject-toml.md) |
+| `scripts/build-and-deploy.sh` | 27 | [bash.md](bash.md) |
+| `scripts/docker-smoke.sh` | 20 | [bash.md](bash.md) |
+| `scripts/env.sh` | 8 | [bash.md](bash.md) |
+| `scripts/lib.sh` | 31 | [bash.md](bash.md) |
+| `scripts/provision.sh` | 34 | [bash.md](bash.md) |
+| `scripts/run-workers.sh` | 25 | [bash.md](bash.md) |
+| `scripts/show-queues.sh` | 14 | [bash.md](bash.md) |
+| `scripts/teardown.sh` | 13 | [bash.md](bash.md) |
+| `sql/001_schema.sql` | 26 | [sql.md](sql.md) |
+| `sql/002_seed.sql` | 4 | [sql.md](sql.md) |
+| `sql/003_queries.sql` | 27 | [sql.md](sql.md) |
+| `sql/migrations/001_processed_messages.sql` | 6 | [sql.md](sql.md) |
+| `sql/reset.sql` | 4 | [sql.md](sql.md) |
+| `src/order_worker/__init__.py` | 1 | [python.md](python.md) |
+| `src/order_worker/application/__init__.py` | 1 | [python.md](python.md) |
+| `src/order_worker/application/check_ledger.py` | 55 | [python.md](python.md) |
+| `src/order_worker/application/handle_delivery.py` | 99 | [python.md](python.md) |
+| `src/order_worker/application/ports.py` | 95 | [python.md](python.md) |
+| `src/order_worker/application/produce_orders.py` | 23 | [python.md](python.md) |
+| `src/order_worker/application/replay_dead_letters.py` | 85 | [python.md](python.md) |
+| `src/order_worker/application/run_worker.py` | 83 | [python.md](python.md) |
+| `src/order_worker/domain/__init__.py` | 1 | [python.md](python.md) |
+| `src/order_worker/domain/commands.py` | 69 | [python.md](python.md) |
+| `src/order_worker/domain/errors.py` | 19 | [python.md](python.md) |
+| `src/order_worker/domain/ordering.py` | 4 | [python.md](python.md) |
+| `src/order_worker/domain/processing.py` | 29 | [python.md](python.md) |
+| `src/order_worker/domain/repair.py` | 19 | [python.md](python.md) |
+| `src/order_worker/infrastructure/__init__.py` | 1 | [python.md](python.md) |
+| `src/order_worker/infrastructure/clock.py` | 10 | [python.md](python.md) |
+| `src/order_worker/infrastructure/health_server.py` | 53 | [python.md](python.md) |
+| `src/order_worker/infrastructure/logging.py` | 29 | [python.md](python.md) |
+| `src/order_worker/infrastructure/scenarios.py` | 159 | [python.md](python.md) |
+| `src/order_worker/infrastructure/servicebus.py` | 149 | [azure-servicebus.md](azure-servicebus.md) |
+| `src/order_worker/infrastructure/settings.py` | 74 | [python.md](python.md) |
+| `src/order_worker/infrastructure/shutdown.py` | 23 | [python.md](python.md) |
+| `src/order_worker/infrastructure/simulation.py` | 246 | [python.md](python.md) |
+| `src/order_worker/infrastructure/sqlite_ledger.py` | 83 | [sqlite.md](sqlite.md) |
+| `src/order_worker/infrastructure/wiring.py` | 11 | [python.md](python.md) |
+| `src/order_worker/interfaces/__init__.py` | 1 | [python.md](python.md) |
+| `src/order_worker/interfaces/check_cli.py` | 32 | [python.md](python.md) |
+| `src/order_worker/interfaces/common.py` | 22 | [python.md](python.md) |
+| `src/order_worker/interfaces/dlq_cli.py` | 44 | [python.md](python.md) |
+| `src/order_worker/interfaces/produce_cli.py` | 25 | [python.md](python.md) |
+| `src/order_worker/interfaces/simulate_cli.py` | 122 | [python.md](python.md) |
+| `src/order_worker/interfaces/worker_cli.py` | 72 | [python.md](python.md) |
+| `tests/conftest.py` | 10 | [pytest.md](pytest.md) |
+| `tests/e2e/test_lesson_scenarios.py` | 125 | [pytest.md](pytest.md) |
+| `tests/integration/test_azure_live.py` | 29 | [pytest.md](pytest.md) |
+| `tests/integration/test_sqlite_ledger.py` | 121 | [pytest.md](pytest.md) |
+| `tests/unit/application/fakes.py` | 101 | [pytest.md](pytest.md) |
+| `tests/unit/application/test_handle_delivery.py` | 95 | [pytest.md](pytest.md) |
+| `tests/unit/application/test_produce_replay_and_check.py` | 106 | [pytest.md](pytest.md) |
+| `tests/unit/application/test_run_worker.py` | 84 | [pytest.md](pytest.md) |
+| `tests/unit/domain/test_commands_ordering_and_repair.py` | 77 | [pytest.md](pytest.md) |
+| `tests/unit/infrastructure/test_servicebus_adapter.py` | 184 | [pytest.md](pytest.md) |
+| `tests/unit/infrastructure/test_settings_logging_clock_shutdown.py` | 119 | [pytest.md](pytest.md) |
+| `tests/unit/infrastructure/test_simulation.py` | 129 | [pytest.md](pytest.md) |
+| `tests/unit/interfaces/test_clis.py` | 106 | [pytest.md](pytest.md) |

@@ -71,6 +71,65 @@ log "a Service Bus namespace is deleted at once (it has no soft delete); the Sta
 
 `terraform destroy` removes the budget as well, which deleting the group alone would not (a budget belongs to the subscription). A Service Bus namespace has no soft delete, so it is gone at once.
 
+### Every line, in order
+
+This part walks through every file this note is responsible for, from the first non-blank line to the last, in blocks. Each block shows the lines (the numbers say where they sit in the file) and then explains them. New ideas are explained at the first place they are needed; later blocks use them without repeating the explanation.
+
+#### `infra/modules/budget/main.tf`
+
+19 lines of code and comments. Each block below quotes consecutive lines of the file, with the line numbers, and explains them.
+
+**Lines 1 to 21**
+
+```hcl
+resource "azurerm_consumption_budget_subscription" "this" {
+  name            = var.name
+  subscription_id = "/subscriptions/${var.subscription_id}"
+  amount          = var.amount
+  time_grain      = "Monthly"
+
+  time_period {
+    start_date = var.start_date
+  }
+
+  dynamic "notification" {
+    for_each = toset(var.thresholds_percent)
+    content {
+      enabled        = true
+      threshold      = notification.value
+      operator       = "GreaterThan"
+      threshold_type = "Actual"
+      contact_emails = var.contact_emails
+    }
+  }
+}
+```
+
+**New idea.** **Azure Key Vault** stores secrets, keys and certificates behind Azure's access control and writes an audit record of every use. A program reads a secret by calling the vault with its identity, so the secret never has to sit in a file or in the program's settings.
+
+**New idea.** An Azure **budget** watches the spending of a subscription and e-mails people when it passes a threshold such as 80 or 100 percent. It alerts; it does not stop anything from running.
+
+**New idea.** A **GUID** (or UUID) is a 128-bit identifier written as 32 hexadecimal digits in groups, such as `00000000-0000-0000-0000-000000000000`. Azure uses them for subscriptions, tenants and identities. The all-zero value in examples is a placeholder, not a real id.
+
+**New idea.** An Azure **subscription** is the billing container for resources: everything created in it is charged to it, and its settings and access control apply to it. A *tenant* (the organization's identity directory) can hold several subscriptions.
+
+- `resource "azurerm_consumption_budget_subscription" "this" {`: A `resource` block declares one real thing Terraform must create and keep in step with this file. It has two labels: the **type** (such as `azurerm_key_vault`, which names the provider and the kind of thing) and a **local name** (such as `this`) used only to refer to it from other places as `azurerm_key_vault.this`. The lines inside are the thing's settings, called **arguments**. Declares the resource `azurerm_consumption_budget_subscription.this`. A **budget** watches spending on a subscription and sends an e-mail when a threshold is crossed. It alerts; it does not stop spending.
+- `name            = var.name`: `name`: The name of this thing in Azure. Here: the input variable `name` (Budget name).
+- `subscription_id = "/subscriptions/${var.subscription_id}"`: `subscription_id`: The id of the Azure subscription (the billing container) to work in. Here: text built from the pieces the input variable `subscription_id` (Subscription GUID the budget watches). `${...}` inside a quoted string is **interpolation**: Terraform evaluates what is inside and puts its text into the string.
+- `amount          = var.amount`: `amount`: The budget amount in the account's currency. Here: the input variable `amount` (Monthly amount in the billing currency).
+- `time_grain      = "Monthly"`: `time_grain`: How often the budget resets (`Monthly`). Here: the text `"Monthly"`.
+- `time_period {`: Starts the nested `time_period` block: The dates the budget applies.
+- `start_date = var.start_date`: `start_date`: The first day the budget applies. Here: the input variable `start_date` (First day of the budget's first month, as 2026-11-01T00:00:00Z. Azure requires the first of a month).
+- `dynamic "notification" {`: A `dynamic` block repeats a nested block once for each entry of a collection (`for_each`); `content { ... }` is the block to repeat, and the loop variable is named after the dynamic block. Repeats the nested block `notification` once for each entry of the collection named by `for_each`.
+- `for_each = toset(var.thresholds_percent)`: `for_each` makes one copy of the resource (or module) for each entry of a map or set. Inside, `each.key` is the entry's key and `each.value` its value. Each copy is tracked under its key, so adding or removing one entry touches only that copy. `for_each` is set to the input variable `thresholds_percent` (Actual-spend percentages that send an alert). `toset(list)` converts a list to a set (no duplicates, no order).
+- `content {`: Starts the nested `content` block: The body of the block repeated by the `dynamic` block.
+- `enabled        = true`: `enabled`: Whether the setting is switched on. Here: `true`.
+- `threshold      = notification.value`: `threshold`: The percentage of the budget at which the e-mail is sent. Here: `notification.value`.
+- `operator       = "GreaterThan"`: `operator`: How the spend is compared with the threshold. Here: the text `"GreaterThan"`.
+- `threshold_type = "Actual"`: `threshold_type`: Whether the threshold is measured against `Actual` spending or `Forecasted` spending. Here: the text `"Actual"`.
+- `contact_emails = var.contact_emails`: `contact_emails`: The e-mail addresses that receive the alert. Here: the input variable `contact_emails` (Addresses that receive the alerts).
+- Closing lines: `}` end the blocks opened above.
+
 ## Try it yourself
 
 Run the budget tests.

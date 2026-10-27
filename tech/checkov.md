@@ -21,7 +21,7 @@ The template asks for `checkov` in CI. Findings were fixed where practical; the 
 
 ## How it works underneath
 
-Checkov parses the Terraform into a graph, evaluates variables where it can, and runs each **check** (named `CKV_AZURE_59` and so on) against the matching resources. A failed check prints the resource, file and a guide link.
+Checkov parses the Terraform into a graph, evaluates variables where it can, and runs each **check** (each named like `CKV_AZURE_59`) against the matching resources. A failed check prints the resource, file and a guide link.
 
 You can **skip** a check with a comment inside the resource: `#checkov:skip=CKV_AZURE_59:reason`. The reason after the second colon is shown in the report. This repository puts every skip with its reason beside the resource it affects, so a reviewer reads the trade-off next to the code. `.checkov.yaml` selects folders, frameworks, and a `var-file` so variables are evaluated as in the final deployment.
 
@@ -63,6 +63,74 @@ resource "azurerm_servicebus_namespace" "this" {
 ```
 
 Four checks cannot pass on the Standard tier: customer-managed keys, double encryption, a private endpoint or network rule, and an identity on the namespace itself. Each skip says why. The namespace does pass the check that matters most here: shared access keys are off (`local_auth_enabled = false`).
+
+### Every line, in order
+
+This part walks through every file this note is responsible for, from the first non-blank line to the last, in blocks. Each block shows the lines (the numbers say where they sit in the file) and then explains them. New ideas are explained at the first place they are needed; later blocks use them without repeating the explanation.
+
+#### `.checkov.yaml`
+
+14 lines of code and comments. Each block below quotes consecutive lines of the file, with the line numbers, and explains them.
+
+**Lines 1 to 3**
+
+```yaml
+# checkov over the Terraform in infra/, the Dockerfile and the workflow. Findings that are deliberate choices for this
+# teaching slice carry an inline `checkov:skip=ID:reason` next to the resource, so each skip and its reason can be
+# read where the code is; nothing is skipped here.
+```
+
+**New idea.** **Azure Blob Storage** stores files (*blobs*) in a *storage account*. Blobs live in *containers*, which work like top-level folders, and each blob is addressed by account, container and name. (This "container" is not a Docker container.)
+
+**New idea.** A **container** is a packaged program together with everything it needs, run in isolation from the rest of the machine. An **image** is the read-only package a container starts from, built with a *Dockerfile*. A **registry** stores images so that other machines can pull them.
+
+A comment of three lines. **checkov** is a scanner that reads infrastructure code (and Dockerfiles and workflow files) and reports settings that are risky, such as a storage account open to the public. Where a finding is a deliberate choice, the code carries an inline `checkov:skip=RULE:reason` comment next to the resource, so each exception and its reason can be read where it applies. This configuration file itself skips nothing.
+
+**Lines 4 to 6**
+
+```yaml
+directory:
+  - infra
+  - .github
+```
+
+`directory:` followed by an indented list. **YAML** is a data format built on indentation: a line ending in `:` names a key, and lines starting with `- ` below it, indented, are the items of a list. This list tells checkov to scan every file under `infra` (all Terraform) and under `.github` (the CI workflow).
+
+**Lines 7 to 8**
+
+```yaml
+file:
+  - Dockerfile
+```
+
+`file:` lists single files to scan: here the `Dockerfile` in the repository root.
+
+**Lines 9 to 12**
+
+```yaml
+framework:
+  - terraform
+  - dockerfile
+  - github_actions
+```
+
+`framework:` lists the kinds of files to check: `terraform`, `dockerfile` and `github_actions`. Limiting the list keeps checkov from trying rule sets that do not apply.
+
+**Line 13**
+
+```yaml
+download-external-modules: false
+```
+
+`download-external-modules: false` stops checkov from downloading modules from the internet while scanning. It checks only the modules that are in this repository, so the result does not depend on the network.
+
+**Line 14**
+
+```yaml
+evaluate-variables: true
+```
+
+`evaluate-variables: true` makes checkov work out the values of Terraform variables (from their defaults) before applying rules, so a rule such as "public access must be off" sees `false` instead of the text `var.public_network_access_enabled`.
 
 ## Try it yourself
 

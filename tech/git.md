@@ -57,6 +57,100 @@ backend.hcl
 
 The Terraform block ignores `.terraform/` (downloaded providers), state files (`*.tfstate`, which can hold secrets), `*.tfvars` (variable files with personal ids) but brings back `!*.tfvars.example`, and `backend.hcl`. The last lines ignore throwaway module lock files; only the environment's lock file is committed.
 
+### Every line, in order
+
+This part walks through every file this note is responsible for, from the first non-blank line to the last, in blocks. Each block shows the lines (the numbers say where they sit in the file) and then explains them. New ideas are explained at the first place they are needed; later blocks use them without repeating the explanation.
+
+#### `.gitignore`
+
+26 lines of code and comments. Each block below quotes consecutive lines of the file, with the line numbers, and explains them.
+
+**Lines 1 to 15**
+
+```text
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.import_linter_cache/
+.coverage
+.env
+.DS_Store
+.omc/
+logs/
+```
+
+**New idea.** An **environment variable** is a named text value that the operating system hands to every program it starts, such as `PORT=8080`. It is the usual way to configure a program without changing its code, and the way a deployment passes settings that differ between machines.
+
+**New idea.** A **virtual environment** is a private folder holding a copy of the Python interpreter and the libraries installed for one project. It keeps the project's libraries separate from the rest of the machine, so two projects can use different versions of the same library.
+
+**New idea.** **Code coverage** measures which lines (and branches) of the program were run while the tests ran. A line the tests never reach is untested, so the project requires a high percentage for its core layers.
+
+**New idea.** **git** is the version-control system that records every change to the project's files as a numbered commit, so any earlier state can be recovered and changes can be reviewed. Files listed in `.gitignore` are never recorded.
+
+- `.venv/`: A `.gitignore` file lists patterns of files that git must not track. Each line is one pattern; a line starting with `#` is a comment; a blank line is ignored. The folder `.venv` holds a Python **virtual environment**: a private copy of the interpreter and the installed libraries for this one project. It is built by a command, never edited by hand, so git must not store it. The trailing `/` means the pattern matches a folder.
+- `__pycache__/`: Python writes compiled copies of the source files into folders named `__pycache__`; they are rebuilt on demand.
+- `*.pyc`: `*.pyc` matches compiled Python files. `*` stands for any run of characters.
+- `*.egg-info/`: Folders ending in `.egg-info` hold package metadata that `pip install -e .` generates.
+- `build/`: The `build/` folder holds output created while packaging.
+- `dist/`: The `dist/` folder holds finished packages.
+- `.pytest_cache/`: pytest's memory of the last run (which tests failed).
+- `.mypy_cache/`: mypy's cache of already checked files.
+- `.ruff_cache/`: ruff's cache of already checked files.
+- `.import_linter_cache/`: import-linter's cache of the import graph.
+- `.coverage`: The data file the coverage tool writes while the tests run.
+- `.env`: A `.env` file holds local settings, possibly secrets, for one machine. Ignoring it keeps them out of git. (`.env.example`, the template without secrets, is not ignored.)
+- `.DS_Store`: A hidden file macOS creates in folders it has displayed.
+- `.omc/`: Working files of a developer tool; per-machine, not part of the project.
+- `logs/`: Log files written while running locally.
+
+**Lines 17 to 25**
+
+```text
+# Terraform: providers and state stay out of git; the lock file (.terraform.lock.hcl) is committed.
+.terraform/
+*.tfstate
+*.tfstate.*
+data/
+*.tfvars
+!*.tfvars.example
+backend.hcl
+.tflint.d/
+```
+
+**New idea.** **Microsoft Entra ID** (formerly Azure Active Directory) is the identity service of Azure. A **tenant** is one organization's directory in it. Every identity in the directory (a person, a group, an application, a managed identity) has an *object id*, and the party that receives permissions is called the *principal*.
+
+**New idea.** A **lock file** records the exact versions (and often the hashes) of every package a project uses, including packages that those packages need. Installing from it gives the same result on every machine and on every day.
+
+**New idea.** Terraform's **state** is a file in which it records the real resources it created and their ids. Each run compares the code, the state and reality to decide what to change. It may contain sensitive values, so it is never committed; a *backend* is the place where the state is stored.
+
+**New idea.** An Azure **subscription** is the billing container for resources: everything created in it is charged to it, and its settings and access control apply to it. A *tenant* (the organization's identity directory) can hold several subscriptions.
+
+- `# Terraform: providers and state stay out of git; the lock file (.terraform.lock.hcl) is committed.`: Comment for the reader: Terraform: providers and state stay out of git; the lock file (.terraform.lock.hcl) is committed.
+- `.terraform/`: The folder where `terraform init` downloads the provider plug-ins. It is large, platform-specific and rebuilt by `init`.
+- `*.tfstate`: Terraform **state** files record the real resources Terraform created. They can contain secrets, so they must never be committed.
+- `*.tfstate.*`: Backups of the state file (`terraform.tfstate.backup`).
+- `data/`: Local database files (the SQLite ledger) created while running.
+- `*.tfvars`: `.tfvars` files assign values to Terraform variables, here including the personal subscription and tenant ids, so they stay local.
+- `!*.tfvars.example`: A line starting with `!` **re-includes** what an earlier line excluded: the `.example` templates with placeholder values are committed even though `*.tfvars` is ignored.
+- `backend.hcl`: `backend.hcl` is the local copy of the remote-state settings, with real names; only `backend.hcl.example` is committed.
+- `.tflint.d/`: The folder where `tflint --init` downloads its rule plug-ins.
+
+**Lines 27 to 28**
+
+```text
+# Only the environment pins provider versions (its lock file is committed); module test runs create throwaway locks.
+infra/modules/*/.terraform.lock.hcl
+```
+
+- `# Only the environment pins provider versions (its lock file is committed); module test runs create throwaway locks.`: Comment for the reader: Only the environment pins provider versions (its lock file is committed); module test runs create throwaway locks.
+- `infra/modules/*/.terraform.lock.hcl`: Test runs of a module create a throwaway provider lock file in the module folder. Only the environment's lock file is the real one (it is committed), so these are ignored.
+
 ## Try it yourself
 
 Read the history.

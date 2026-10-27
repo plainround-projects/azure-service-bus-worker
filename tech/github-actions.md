@@ -76,6 +76,232 @@ The `check` job: `runs-on: ubuntu-latest` picks the machine; `actions/checkout@v
 
 A second job installs checkov with pip and runs `make scan`; the Makefile variable `CHECKOV=checkov` replaces the default `uvx` command. The third job builds the image and runs the smoke test. The three jobs run in parallel.
 
+### Every line, in order
+
+This part walks through every file this note is responsible for, from the first non-blank line to the last, in blocks. Each block shows the lines (the numbers say where they sit in the file) and then explains them. New ideas are explained at the first place they are needed; later blocks use them without repeating the explanation.
+
+#### `.github/workflows/ci.yml`
+
+41 lines of code and comments. Each block below quotes consecutive lines of the file, with the line numbers, and explains them.
+
+**Line 1**
+
+```yaml
+name: ci
+```
+
+**New idea.** **YAML** is a data format built on indentation: a line `key: value` sets a value, a line ending in `:` introduces a nested group written on the indented lines below it, and lines starting with `- ` are the items of a list. A `#` starts a comment.
+
+`name: ci` names the workflow. **GitHub Actions** is GitHub's automation: a *workflow* is a YAML file in `.github/workflows/`, and GitHub runs it when the events it names happen.
+
+**Line 3**
+
+```yaml
+on: [push, pull_request]
+```
+
+`on: [push, pull_request]` lists the events that start the workflow: someone pushes commits, or opens or updates a pull request. The square brackets write a list on one line.
+
+**Lines 5 to 6**
+
+```yaml
+permissions:
+  contents: read
+```
+
+**New idea.** An **access token** is a short-lived piece of text, issued by an identity service after you prove who you are, that you attach to a request to show that you are allowed to make it. It expires after about an hour, so a stolen one is far less dangerous than a password.
+
+`permissions` limits what the workflow's automatic access token may do. `contents: read` allows reading the repository and nothing else, which is the least privilege the checks need.
+
+**Lines 8 to 10**
+
+```yaml
+env:
+  TERRAFORM_VERSION: "1.17.0"
+  TFLINT_VERSION: "v0.59.1"
+```
+
+**New idea.** An **environment variable** is a named text value that the operating system hands to every program it starts, such as `PORT=8080`. It is the usual way to configure a program without changing its code, and the way a deployment passes settings that differ between machines.
+
+**New idea.** A **version number** such as `4.81.0` is read as major.minor.patch. A constraint such as `>=4.81` means "4.81 or newer", and Terraform's `~> 4.81` means "4.81 or newer but below 5.0".
+
+`env` defines variables for the whole workflow: the Terraform version and the tflint version, kept in one place so that every step uses the same pinned values. They are read below as `${{ env.NAME }}`; the double braces are GitHub's expression syntax.
+
+**Line 12**
+
+```yaml
+jobs:
+```
+
+`jobs:` starts the list of jobs. A *job* is a group of steps run on one fresh machine; jobs run at the same time unless one is told to wait for another.
+
+**Line 13**
+
+```yaml
+  check:
+```
+
+The first job is called `check` (its key).
+
+**Line 14**
+
+```yaml
+    name: Format, lint, types, import rules, shellcheck, unit, integration and end-to-end tests, Terraform validate and tests, tflint, dependency audit
+```
+
+`name` is the label shown in GitHub's interface; it lists everything this job checks.
+
+**Line 15**
+
+```yaml
+    runs-on: ubuntu-latest
+```
+
+**New idea.** A **virtual machine (VM)** is a computer you rent in Azure and run like a real one. `az vm run-command` makes the VM's agent run a script on it and return the output, so no SSH connection or public address is needed.
+
+`runs-on: ubuntu-latest` chooses the kind of machine: a current Ubuntu Linux virtual machine hosted by GitHub, created for this job and thrown away afterwards.
+
+**Line 16**
+
+```yaml
+    steps:
+```
+
+`steps:` starts the ordered list of things to do.
+
+**Line 17**
+
+```yaml
+      - uses: actions/checkout@v4
+```
+
+`- uses: actions/checkout@v4` runs a ready-made **action** (a reusable step published on GitHub) that downloads the repository's code onto the machine. `@v4` pins its major version. A line starting with `- ` begins one item of the list.
+
+**Lines 18 to 20**
+
+```yaml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+```
+
+`actions/setup-python@v5` installs Python. `with:` passes settings to the action; here `python-version: "3.13"`.
+
+**Lines 21 to 24**
+
+```yaml
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+```
+
+`hashicorp/setup-terraform@v3` installs Terraform. `terraform_version` takes the version from the `env` variable `TERRAFORM_VERSION`; `terraform_wrapper: false` turns off a wrapper that would otherwise change how Terraform's output is captured by later steps.
+
+**Lines 25 to 27**
+
+```yaml
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: ${{ env.TFLINT_VERSION }}
+```
+
+`terraform-linters/setup-tflint@v4` installs tflint at the pinned version.
+
+**Line 28**
+
+```yaml
+      - run: make check
+```
+
+`- run: make check` is a step that runs a shell command: the project's own `check` target, which runs the linters, the tests and the Terraform validation. CI therefore runs exactly what a developer runs on a laptop.
+
+**Line 29**
+
+```yaml
+      - run: make audit
+```
+
+**New idea.** With **peek-lock**, a receiver takes a message but the broker only hides it under a *lock* for a limited time (30 seconds here). If the receiver *completes* the message it is deleted; if it *abandons* it or the lock expires, the message becomes visible again and is delivered once more, which is why processing must tolerate duplicates.
+
+`- run: make audit` checks the locked dependencies against the database of known vulnerabilities.
+
+**Lines 31 to 34**
+
+```yaml
+  checkov:
+    name: Checkov on the Terraform, Dockerfile and workflows
+    runs-on: ubuntu-latest
+    steps:
+```
+
+**New idea.** A **container** is a packaged program together with everything it needs, run in isolation from the rest of the machine. An **image** is the read-only package a container starts from, built with a *Dockerfile*. A **registry** stores images so that other machines can pull them.
+
+The second job, `checkov`, with its label, machine and the start of its steps. It is separate so that the scanner runs in parallel with the main checks.
+
+**Line 35**
+
+```yaml
+      - uses: actions/checkout@v4
+```
+
+Downloads the code.
+
+**Lines 36 to 38**
+
+```yaml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+```
+
+Installs Python 3.13 for this job.
+
+**Line 39**
+
+```yaml
+      - run: pip install checkov==3.3.30
+```
+
+`pip install checkov==3.3.30` installs the scanner at an exact version.
+
+**Line 40**
+
+```yaml
+      - run: make scan CHECKOV=checkov
+```
+
+`make scan CHECKOV=checkov` runs the scan target and tells it to use the `checkov` command just installed instead of the default `uvx` form.
+
+**Lines 42 to 45**
+
+```yaml
+  image:
+    name: Build the image and smoke-test it (non-root, packaged SQL, fail-fast configuration)
+    runs-on: ubuntu-latest
+    steps:
+```
+
+**New idea.** A **relational database** stores data in *tables*: grids with fixed, typed columns and one row per record. **SQL** is the language used to create tables and to insert, change and read rows. **SQLite** is a database that lives in a single file and needs no server.
+
+The third job, `image`: its label, machine and steps.
+
+**Line 46**
+
+```yaml
+      - uses: actions/checkout@v4
+```
+
+Downloads the code.
+
+**Line 47**
+
+```yaml
+      - run: make docker-smoke
+```
+
+`make docker-smoke` builds the image and runs the smoke-test script: the container runs as a non-root user, the packaged SQL works, and a missing configuration makes the worker fail at once.
+
 ## Try it yourself
 
 List the actions used.

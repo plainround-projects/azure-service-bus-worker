@@ -47,6 +47,76 @@ trim_trailing_whitespace = false
 
 `root = true` stops the search for more `.editorconfig` files. `[*]` applies to every file: UTF-8, Unix line endings (`lf`), a final newline, no trailing spaces, four spaces per indent. `[*.{yml,yaml,json,toml,tf,hcl,sh}]` overrides the indent to two for those file types. `[Makefile]` uses tabs, because Make requires them. `[*.md]` keeps trailing whitespace because two spaces at the end of a Markdown line can mean a line break.
 
+### Every line, in order
+
+This part walks through every file this note is responsible for, from the first non-blank line to the last, in blocks. Each block shows the lines (the numbers say where they sit in the file) and then explains them. New ideas are explained at the first place they are needed; later blocks use them without repeating the explanation.
+
+#### `.editorconfig`
+
+14 lines of code and comments. Each block below quotes consecutive lines of the file, with the line numbers, and explains them.
+
+**Line 1**
+
+```text
+root = true
+```
+
+- `root = true`: An `.editorconfig` file tells every editor how to format files (indentation, line endings) so that different people's editors produce the same files. Stops editors from looking for more `.editorconfig` files in parent folders; this is the top one.
+
+**Lines 3 to 9**
+
+```text
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+```
+
+**New idea.** **UTF-8** is the standard way to store text as bytes, able to represent every language. A program that reads a file must decode the bytes with the right encoding to get text back.
+
+- `[*]`: A line in square brackets is a **section header**: the settings below it apply to files whose names match the pattern. `*` matches every file.
+- `charset = utf-8`: Save files as UTF-8 text.
+- `end_of_line = lf`: End lines with a single line-feed character (the Unix style), not the Windows pair.
+- `insert_final_newline = true`: End every file with a newline, as Unix tools expect.
+- `trim_trailing_whitespace = true`: Remove spaces left at the end of lines when saving.
+- `indent_style = space`: Indent with spaces, not tab characters.
+- `indent_size = 4`: Each indentation level is four spaces (the Python convention).
+
+**Lines 11 to 12**
+
+```text
+[*.{yml,yaml,json,toml,tf,hcl,sh}]
+indent_size = 2
+```
+
+**New idea.** **JSON** is a text format for data: objects `{"name": value}`, lists `[1, 2]`, strings, numbers, `true`, `false` and `null`. Most web services send and receive their data as JSON because every programming language can read it.
+
+- `[*.{yml,yaml,json,toml,tf,hcl,sh}]`: A section for these file types; the braces list alternatives.
+- `indent_size = 2`: Each indentation level is two spaces in these formats.
+
+**Lines 14 to 15**
+
+```text
+[Makefile]
+indent_style = tab
+```
+
+- `[Makefile]`: A section for the file named exactly `Makefile`.
+- `indent_style = tab`: `make` requires a real tab character at the start of each command line, so this file must be indented with tabs.
+
+**Lines 17 to 18**
+
+```text
+[*.md]
+trim_trailing_whitespace = false
+```
+
+- `[*.md]`: A section for Markdown files.
+- `trim_trailing_whitespace = false`: Keep trailing spaces in Markdown: two spaces at the end of a line mean a line break there.
+
 ## Try it yourself
 
 Read the file.

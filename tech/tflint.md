@@ -38,6 +38,61 @@ config {
 
 `tflint --init` fetches the plugins; `--chdir infra --recursive` lints every module folder; `--minimum-failure-severity=warning` makes warnings fail the build; `--config` gives the absolute path to the file. If TFLint is not installed, the Makefile prints a visible warning and CI runs it.
 
+### Every line, in order
+
+This part walks through every file this note is responsible for, from the first non-blank line to the last, in blocks. Each block shows the lines (the numbers say where they sit in the file) and then explains them. New ideas are explained at the first place they are needed; later blocks use them without repeating the explanation.
+
+#### `.tflint.hcl`
+
+13 lines of code and comments. Each block below quotes consecutive lines of the file, with the line numbers, and explains them.
+
+**Line 1**
+
+```hcl
+# tflint --init downloads the azurerm ruleset once; --recursive then lints infra/ and every module.
+```
+
+**New idea.** An **environment variable** is a named text value that the operating system hands to every program it starts, such as `PORT=8080`. It is the usual way to configure a program without changing its code, and the way a deployment passes settings that differ between machines.
+
+A comment. **tflint** is a *linter* for Terraform: a program that reads the code without running it and reports mistakes and bad habits. It consists of a small core plus *plug-ins*, each a rule set. `tflint --init` downloads the plug-ins named in this file, once, and `tflint --recursive` then checks the environment folder and every module folder.
+
+**Lines 2 to 4**
+
+```hcl
+config {
+  call_module_type = "local"
+}
+```
+
+The `config` block holds settings for tflint itself. `call_module_type = "local"` tells it to follow `module` blocks into the folders on disk (the project's own `infra/modules/...`) and lint those too, but not to download modules from the internet.
+
+**Lines 6 to 9**
+
+```hcl
+plugin "terraform" {
+  enabled = true
+  preset  = "recommended"
+}
+```
+
+The `terraform` plug-in is the rule set that ships inside tflint. It checks general Terraform hygiene: unused variables, missing version constraints, deprecated syntax. `enabled = true` switches it on. `preset = "recommended"` picks the rule list the tflint authors recommend, so the project does not have to enable each rule by hand.
+
+**Lines 11 to 15**
+
+```hcl
+plugin "azurerm" {
+  enabled = true
+  version = "0.28.0"
+  source  = "github.com/terraform-linters/tflint-ruleset-azurerm"
+}
+```
+
+**New idea.** A **virtual machine (VM)** is a computer you rent in Azure and run like a real one. `az vm run-command` makes the VM's agent run a script on it and return the output, so no SSH connection or public address is needed.
+
+**New idea.** A **version number** such as `4.81.0` is read as major.minor.patch. A constraint such as `>=4.81` means "4.81 or newer", and Terraform's `~> 4.81` means "4.81 or newer but below 5.0".
+
+The `azurerm` plug-in is a separate rule set for the Azure provider. It knows the valid values of Azure settings (for example which virtual machine sizes exist) and reports a typo in a value that plain Terraform would only discover when Azure rejects it during `apply`. `version = "0.28.0"` pins the rule set so that a new release cannot change the result of a lint run, and `source` says where to download it (a GitHub project).
+
 ## Try it yourself
 
 Check the installed version.

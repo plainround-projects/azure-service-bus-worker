@@ -21,7 +21,7 @@ Strict typing is part of the repository's quality bar. It catches wrong types in
 
 mypy builds a model of every function's input and output types from the hints and from the libraries you use. It then walks each function body and checks that every call and assignment is consistent with that model. It reports `file:line: error: message  [code]`.
 
-`strict = true` turns on a bundle of checks: every function must have hints, no untyped calls, no unused ignores, and so on. A `# type: ignore[code]` comment silences one error; strict mode reports an ignore that is no longer needed.
+`strict = true` turns on a bundle of checks: every function must have hints, no untyped calls, and no ignore comments that are no longer needed. A `# type: ignore[code]` comment silences one error; strict mode reports an ignore that is no longer needed.
 
 Some libraries ship **stubs** or inline hints (a `py.typed` marker file) so mypy can check calls into them. Libraries without hints are treated as untyped and need an override.
 

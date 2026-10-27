@@ -98,6 +98,99 @@ provider "registry.terraform.io/hashicorp/azurerm" {
 
 The lock file records the exact version and (further down) hashes for four platforms, which `terraform providers lock -platform=...` added so CI on Linux accepts the same lock.
 
+### Every line, in order
+
+This part walks through every file this note is responsible for, from the first non-blank line to the last, in blocks. Each block shows the lines (the numbers say where they sit in the file) and then explains them. New ideas are explained at the first place they are needed; later blocks use them without repeating the explanation.
+
+#### `infra/environments/dev/providers.tf`
+
+12 lines of code and comments. Each block below quotes consecutive lines of the file, with the line numbers, and explains them.
+
+**Lines 1 to 14**
+
+```hcl
+provider "azurerm" {
+  subscription_id = var.subscription_id
+  tenant_id       = var.tenant_id
+
+  # scripts/provision.sh registers the resource providers this slice needs, so the plan never changes
+  # subscription-wide settings on its own.
+  resource_provider_registrations = "none"
+
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
+}
+```
+
+**New idea.** **Microsoft Entra ID** (formerly Azure Active Directory) is the identity service of Azure. A **tenant** is one organization's directory in it. Every identity in the directory (a person, a group, an application, a managed identity) has an *object id*, and the party that receives permissions is called the *principal*.
+
+**New idea.** A **GUID** (or UUID) is a 128-bit identifier written as 32 hexadecimal digits in groups, such as `00000000-0000-0000-0000-000000000000`. Azure uses them for subscriptions, tenants and identities. The all-zero value in examples is a placeholder, not a real id.
+
+**New idea.** An Azure **subscription** is the billing container for resources: everything created in it is charged to it, and its settings and access control apply to it. A *tenant* (the organization's identity directory) can hold several subscriptions.
+
+**New idea.** An Azure **resource group** is a folder-like container for the resources of one project. Resources in a group share a life cycle: deleting the group deletes everything in it.
+
+- `provider "azurerm" {`: A `provider` block configures a plug-in that knows how to talk to one service (here `azurerm`, for Azure). It holds settings that apply to every resource of that provider. Configures the `azurerm` provider.
+- `subscription_id = var.subscription_id`: `subscription_id`: The id of the Azure subscription (the billing container) to work in. Here: the input variable `subscription_id` (Subscription GUID (`az account show --query id`)).
+- `tenant_id       = var.tenant_id`: `tenant_id`: The id of the Microsoft Entra ID tenant (the organization's identity directory) that owns the identities and decides access. Here: the input variable `tenant_id` (Entra tenant GUID (`az account show --query tenantId`)).
+- `# scripts/provision.sh registers the resource providers this slice needs, so the plan never changes`: A line starting with `#` (or `//`) is a **comment**: Terraform ignores it; it is there for the reader. Comment for the reader: scripts/provision.sh registers the resource providers this slice needs, so the plan never changes
+- `# subscription-wide settings on its own.`: Comment for the reader: subscription-wide settings on its own.
+- `resource_provider_registrations = "none"`: `resource_provider_registrations`: Which Azure resource providers (the services behind resource types) Terraform registers on its own. `none` means it registers nothing, and the script does it once. Here: the text `"none"`.
+- `features {`: Starts the nested `features` block: Provider-wide behavior switches (required even when empty).
+- `resource_group {`: Starts the nested `resource_group` block: Behavior of the provider for resource groups.
+- `prevent_deletion_if_contains_resources = false`: `prevent_deletion_if_contains_resources`: Whether Terraform refuses to delete a resource group that still contains resources it does not know about. Here: `false`.
+- Closing lines: `}` end the blocks opened above.
+
+#### `infra/environments/dev/versions.tf`
+
+16 lines of code and comments. Each block below quotes consecutive lines of the file, with the line numbers, and explains them.
+
+**Lines 1 to 18**
+
+```hcl
+terraform {
+  required_version = ">= 1.9"
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.81"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.7"
+    }
+  }
+
+  # Local state keeps the practice run self-contained. For a shared environment copy backend.hcl.example to
+  # backend.hcl, uncomment the block below and run `terraform init -backend-config=backend.hcl`.
+  # backend "azurerm" {}
+}
+```
+
+**New idea.** An **environment variable** is a named text value that the operating system hands to every program it starts, such as `PORT=8080`. It is the usual way to configure a program without changing its code, and the way a deployment passes settings that differ between machines.
+
+**New idea.** Terraform's **state** is a file in which it records the real resources it created and their ids. Each run compares the code, the state and reality to decide what to change. It may contain sensitive values, so it is never committed; a *backend* is the place where the state is stored.
+
+**New idea.** A **version number** such as `4.81.0` is read as major.minor.patch. A constraint such as `>=4.81` means "4.81 or newer", and Terraform's `~> 4.81` means "4.81 or newer but below 5.0".
+
+- `terraform {`: The `terraform` block sets rules for Terraform itself: which version may run this code, which provider plug-ins it needs and where to find them, and where to keep state. Starts the settings for Terraform itself.
+- `required_version = ">= 1.9"`: `required_version`: Which Terraform versions may run this code. `>= 1.9` means 1.9 or newer. Here: the text `">= 1.9"`.
+- `required_providers {`: `required_providers` lists the provider plug-ins this code needs, each with `source` (where to download it from) and `version` (which releases are allowed). `~> 4.81` means "4.81 or newer, but below 5.0".
+- `azurerm = {`: Names the provider `azurerm`; its settings follow.
+- `source  = "hashicorp/azurerm"`: Entry `source`: the text `"hashicorp/azurerm"`.
+- `version = "~> 4.81"`: Entry `version`: the text `"~> 4.81"`.
+- `random = {`: Names the provider `random`; its settings follow.
+- `source  = "hashicorp/random"`: Entry `source`: the text `"hashicorp/random"`.
+- `version = "~> 3.7"`: Entry `version`: the text `"~> 3.7"`.
+- `# Local state keeps the practice run self-contained. For a shared environment copy backend.hcl.example to`: Comment for the reader: Local state keeps the practice run self-contained. For a shared environment copy backend.hcl.example to
+- `# backend.hcl, uncomment the block below and run `terraform init -backend-config=backend.hcl`.`: Comment for the reader: backend.hcl, uncomment the block below and run `terraform init -backend-config=backend.hcl`.
+- `# backend "azurerm" {}`: Comment for the reader: backend "azurerm" {}
+- Closing lines: `}` end the blocks opened above.
+
 ## Try it yourself
 
 See the locked versions.

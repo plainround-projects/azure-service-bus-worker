@@ -96,6 +96,48 @@ resource "azurerm_monitor_metric_alert" "dead_letters" {
 
 A **metric alert** watches one number every minute (`frequency = "PT1M"`) over a five-minute window: `DeadletteredMessages`, with aggregation `Maximum`. When it is greater than 0 the alert fires and notifies the action group.
 
+### Every line, in order
+
+This part walks through every file this note is responsible for, from the first non-blank line to the last, in blocks. Each block shows the lines (the numbers say where they sit in the file) and then explains them. New ideas are explained at the first place they are needed; later blocks use them without repeating the explanation.
+
+#### `infra/modules/log_analytics/main.tf`
+
+8 lines of code and comments. Each block below quotes consecutive lines of the file, with the line numbers, and explains them.
+
+**Lines 1 to 8**
+
+```hcl
+resource "azurerm_log_analytics_workspace" "this" {
+  name                = var.name
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  sku                 = "PerGB2018"
+  retention_in_days   = var.retention_in_days
+  tags                = var.tags
+}
+```
+
+**New idea.** An **environment variable** is a named text value that the operating system hands to every program it starts, such as `PORT=8080`. It is the usual way to configure a program without changing its code, and the way a deployment passes settings that differ between machines.
+
+**New idea.** **Azure Key Vault** stores secrets, keys and certificates behind Azure's access control and writes an audit record of every use. A program reads a secret by calling the vault with its identity, so the secret never has to sit in a file or in the program's settings.
+
+**New idea.** **Log Analytics** is Azure's store for logs and metrics, queried with the Kusto Query Language (KQL). A *diagnostic setting* tells a resource to send its logs there, so that, for example, every refused request to a vault can be found afterwards.
+
+**New idea.** An Azure **resource group** is a folder-like container for the resources of one project. Resources in a group share a life cycle: deleting the group deletes everything in it.
+
+**New idea.** **Tags** are name/value labels attached to Azure resources. They change no behavior; they record the owner, project and environment and make cost reports and clean-up possible.
+
+**New idea.** An Azure **region** (such as `westeurope`) is a group of data centers in one geographic area. Where a resource is created decides its latency, its price and which legal rules apply.
+
+- `resource "azurerm_log_analytics_workspace" "this" {`: A `resource` block declares one real thing Terraform must create and keep in step with this file. It has two labels: the **type** (such as `azurerm_key_vault`, which names the provider and the kind of thing) and a **local name** (such as `this`) used only to refer to it from other places as `azurerm_key_vault.this`. The lines inside are the thing's settings, called **arguments**. Declares the resource `azurerm_log_analytics_workspace.this`. A **Log Analytics workspace** is Azure's store for logs and metrics. Other resources send their diagnostics here, and you query it with the Kusto query language (KQL).
+- `name                = var.name`: `name`: The name of this thing in Azure. Here: the input variable `name` (Workspace name, for example law-orders).
+- `resource_group_name = var.resource_group_name`: `resource_group_name`: The resource group the thing is created in. Here: the input variable `resource_group_name` (Resource group that holds the workspace).
+- `location            = var.location`: `location`: The Azure region (data center area) where the thing is created. Here: the input variable `location` (Azure region).
+- `sku                 = "PerGB2018"`: `sku`: The pricing tier / capability level (the SKU) of the service. Here: the text `"PerGB2018"`.
+- `retention_in_days   = var.retention_in_days`: `retention_in_days`: How many days the workspace keeps data before deleting it. Here: the input variable `retention_in_days` (How long logs stay queryable. 30 days is the free retention of the PerGB2018 tier).
+- `tags                = var.tags`: `tags`: Tags are name/value labels attached to the thing. They do not change behavior; they identify the owner, project and environment and make cost reports readable. Here: the input variable `tags` (Tags applied to the workspace).
+- Closing line: `}` ends the block opened above.
+
 ## Try it yourself
 
 Run the namespace module's tests, including no alert without recipients.
