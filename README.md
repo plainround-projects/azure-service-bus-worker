@@ -156,7 +156,7 @@ make reset-db  # sql/reset.sql: empty ledger, no processed_messages
 
 ### What was verified without a subscription
 
-Run on 2026-10-27 (the exact commands and results are in the repository history and the build report): `make lint`, `make test`, `make validate`, `make scan`, `make demos` and the fresh-clone test. What these cannot show is Azure's own behavior: that real Service Bus redelivers after exactly the lock duration, the exact text of its errors, the SDK's lock-renewal timing, whether sessions behave as modeled when a session lock expires, and the regional quota for Container Apps. The simulator models the rules the lesson depends on; the first live run is the check of the model (see ARCHITECTURE.md, "Limits of the teaching build").
+Run on 2026-10-27 (the exact commands and results are in the repository history and the build report): `make lint`, `make test`, `make validate`, `make scan`, `make demos` and the fresh-clone test. **Pending capacity:** the image build and smoke test did not complete (the container network stalled while the shared machine was overloaded). Run `make docker-smoke` once the machine has capacity; it checks the non-root user, the packaged SQL and the fail-fast configuration. The worker's fail-fast exit code 2 was checked outside Docker. What these cannot show is Azure's own behavior: that real Service Bus redelivers after exactly the lock duration, the exact text of its errors, the SDK's lock-renewal timing, whether sessions behave as modeled when a session lock expires, and the regional quota for Container Apps. The simulator models the rules the lesson depends on; the first live run is the check of the model (see ARCHITECTURE.md, "Limits of the teaching build").
 
 ## Stretch goals
 
