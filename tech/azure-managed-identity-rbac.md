@@ -1,0 +1,161 @@
+# Managed identity and Azure RBAC
+
+*Who the worker is and what it may do on the queues. Pinned here: Azure RBAC built-in roles; user-assigned managed identity.*
+
+## What it is
+
+A **managed identity** is an identity that Azure creates and manages for a resource, so the resource can prove who it is to other Azure services without any stored password. **Azure RBAC** (role-based access control) decides what an identity may do: a **role assignment** gives a **principal** (an identity) a **role** (a named set of permissions) at a **scope** (the resource it applies to).
+
+## Why this repository uses it
+
+The lesson gives the worker only Azure Service Bus Data Receiver on the queue and the producer only Data Sender, never the owner role.
+
+## Where it appears
+
+| File | What it does with it |
+|---|---|
+| `infra/modules/user_assigned_identity/` | Creates an identity. |
+| `infra/modules/role_assignments/` | Creates role assignments and refuses wide scopes and the owner role. |
+| `infra/environments/dev/main.tf` | Decides who gets which role on which queue. |
+| `src/order_worker/infrastructure/wiring.py` | Uses the identity through `DefaultAzureCredential`. |
+
+## How it works underneath
+
+There are two kinds. A *system-assigned* identity belongs to one resource and is deleted with it. A *user-assigned* identity is its own resource that you can attach to several resources and keep when you replace one. Each identity has a **client id** (the app's name, safe to put in configuration) and a **principal id** or *object id* (what role assignments use).
+
+Inside an Azure resource, code asks the **instance metadata service** at a local address for a token for the identity; Azure signs one and the resource sends it to the service it wants to call. The service looks at the token's principal and at the role assignments that apply to the resource being touched. A role assigned at a larger scope (a resource group) also applies to everything inside it, which is why the narrowest scope is chosen.
+
+Role assignments take minutes to spread, so a call made right after a grant can fail with 403.
+
+## Walkthrough of this repository's use
+
+```hcl
+  worker_assignments = {
+    for queue_name, queue_id in local.queue_ids : "worker_receives_${queue_name}" => {
+      principal_id = module.worker_identity.principal_id
+      role         = "Azure Service Bus Data Receiver"
+      scope        = queue_id
+    }
+  }
+
+  pull_assignments = {
+    pull_reads_registry = {
+      principal_id = module.pull_identity.principal_id
+      role         = "AcrPull"
+      scope        = module.registry.id
+    }
+  }
+```
+
+A `for` expression creates one assignment per queue: the worker identity gets `Azure Service Bus Data Receiver` on `orders` and on `orders-sessions`, each scoped to that queue's resource id. The worker can receive, complete, abandon and dead-letter, but it cannot send.
+
+```hcl
+  operator_assignments = merge([
+    for queue_name, queue_id in local.queue_ids : {
+      "operator_sends_${queue_name}" = {
+        principal_id   = var.operator_object_id
+        principal_type = "User"
+        role           = "Azure Service Bus Data Sender"
+        scope          = queue_id
+      }
+      "operator_receives_${queue_name}" = {
+        principal_id   = var.operator_object_id
+        principal_type = "User"
+        role           = "Azure Service Bus Data Receiver"
+        scope          = queue_id
+      }
+    }
+    if var.operator_object_id != null
+  ]...)
+```
+
+The operator (the person running the lesson) gets Data Sender and Data Receiver on each queue so the producer, a local worker and the replay tool work from a laptop. `merge([ for ... ]...)` builds one map per queue and merges them; the `...` after the list spreads it into arguments. The `if var.operator_object_id != null` leaves the map empty when no operator is named.
+
+```hcl
+  validation {
+    condition = alltrue([
+      for assignment in var.assignments :
+      can(regex("^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/.+/.+", assignment.scope))
+    ])
+    error_message = "Every scope must be a resource (/subscriptions/.../resourceGroups/.../providers/...), never a subscription or a resource group."
+  }
+
+  validation {
+    condition = alltrue([
+      for assignment in var.assignments :
+      contains(["ServicePrincipal", "User", "Group"], assignment.principal_type)
+    ])
+    error_message = "principal_type must be ServicePrincipal, User or Group."
+  }
+```
+
+Every scope must be a resource, never a subscription or resource group.
+
+```hcl
+    condition     = !anytrue([for assignment in var.assignments : contains(["Owner", "Contributor", "User Access Administrator", "Azure Service Bus Data Owner"], assignment.role)])
+    error_message = "Owner, Contributor, User Access Administrator and Azure Service Bus Data Owner are too wide; this project assigns the Data Sender and Data Receiver roles on single queues."
+```
+
+The roles Owner, Contributor, User Access Administrator and `Azure Service Bus Data Owner` (the namespace-wide data role) are refused at plan time.
+
+## Try it yourself
+
+Run the module's tests, including the refused owner role.
+
+```bash
+cd infra/modules/role_assignments && terraform init -backend=false -input=false >/dev/null && terraform test 2>&1 | tail -4
+```
+
+You should see something like this:
+
+```text
+tests/role_assignments.tftest.hcl... tearing down
+tests/role_assignments.tftest.hcl... pass
+
+Success! 6 passed, 0 failed.
+```
+
+Find the two data roles in the composition.
+
+```bash
+grep -n 'Azure Service Bus Data' infra/environments/dev/main.tf
+```
+
+You should see something like this:
+
+```text
+38:      role         = "Azure Service Bus Data Receiver"
+56:        role           = "Azure Service Bus Data Sender"
+62:        role           = "Azure Service Bus Data Receiver"
+```
+
+## Mistakes people make
+
+- Using the client id where the principal id is needed (`principal does not exist`).
+- Assigning a role at the resource group or subscription when one resource is enough. The role module here refuses those scopes.
+- Granting Owner or Contributor to an app. Data roles such as `Key Vault Secrets User` are narrower.
+- Expecting Owner to read data. Management roles do not include data permissions.
+- Reading a missing role as instant: wait a few minutes before deciding it is broken.
+
+## Check yourself
+
+1. **What is the difference between client id and principal id?**
+   Answer: The client id names the application; the principal (object) id is what role assignments use.
+
+2. **What are the three parts of a role assignment?**
+   Answer: A principal, a role and a scope.
+
+3. **Why choose the narrowest scope?**
+   Answer: A role at a larger scope also applies to everything inside it.
+
+4. **User-assigned or system-assigned: which survives replacing the app?**
+   Answer: User-assigned, because it is its own resource.
+
+5. **Why can a call fail right after a role is granted?**
+   Answer: Role assignments take time to propagate.
+
+## Further reading
+
+- Managed identities: https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview
+- Azure RBAC: https://learn.microsoft.com/en-us/azure/role-based-access-control/overview
+- Built-in roles: https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles

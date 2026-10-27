@@ -6,6 +6,7 @@ All notable changes to this project are recorded here. The format follows [Keep 
 
 ### Added
 
+- `tech/`: 31 technology notes (language, libraries, tools, services, file formats) with an index, a reading order and a ten-minute shortlist; every code quote is copied from the repository and every command's output was captured by running it.
 - A layered Python package (`domain`, `application`, `infrastructure`, `interfaces`) with the worker, the producer, the dead-letter replay tool, the ledger checker and an offline simulation program.
 - Service Bus adapters that authenticate only with `DefaultAzureCredential`, session receivers, automatic lock renewal, batching sender, graceful shutdown, JSON logging and an HTTP health endpoint.
 - A simulated Service Bus (peek-lock, lock expiry, delivery counts, sessions, dead-lettering) and deterministic scenarios for the lesson's three failures.
