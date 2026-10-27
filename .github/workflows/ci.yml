@@ -1,0 +1,47 @@
+name: ci
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+env:
+  TERRAFORM_VERSION: "1.17.0"
+  TFLINT_VERSION: "v0.59.1"
+
+jobs:
+  check:
+    name: Format, lint, types, import rules, shellcheck, unit, integration and end-to-end tests, Terraform validate and tests, tflint, dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: ${{ env.TFLINT_VERSION }}
+      - run: make check
+      - run: make audit
+
+  checkov:
+    name: Checkov on the Terraform, Dockerfile and workflows
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install checkov==3.3.30
+      - run: make scan CHECKOV=checkov
+
+  image:
+    name: Build the image and smoke-test it (non-root, packaged SQL, fail-fast configuration)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make docker-smoke

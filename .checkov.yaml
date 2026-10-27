@@ -1,0 +1,14 @@
+# checkov over the Terraform in infra/, the Dockerfile and the workflow. Findings that are deliberate choices for this
+# teaching slice carry an inline `checkov:skip=ID:reason` next to the resource, so each skip and its reason can be
+# read where the code is; nothing is skipped here.
+directory:
+  - infra
+  - .github
+file:
+  - Dockerfile
+framework:
+  - terraform
+  - dockerfile
+  - github_actions
+download-external-modules: false
+evaluate-variables: true
