@@ -1,0 +1,7 @@
+# Remote state in a storage account you create once, outside this project, with Entra authentication:
+#   terraform init -backend-config=backend.hcl
+resource_group_name  = "rg-terraform-state"
+storage_account_name = "stterraformstate00000"
+container_name       = "tfstate"
+key                  = "azure-service-bus-worker/dev.tfstate"
+use_azuread_auth     = true

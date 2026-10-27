@@ -1,0 +1,30 @@
+# Copy to terraform.tfvars (git-ignored) or let scripts/provision.sh write it from `az account show`.
+# None of these values is a secret; the subscription and tenant ids are still personal, so the real file stays out of git.
+
+subscription_id = "00000000-0000-0000-0000-000000000000"
+tenant_id       = "00000000-0000-0000-0000-000000000000"
+
+location    = "westeurope"
+name_prefix = "orders"
+
+# az ad signed-in-user show --query id --output tsv
+operator_object_id = null
+
+# Mails when any dead-letter queue is not empty.
+alert_email_addresses = ["you@example.com"]
+
+# A safety net: a Standard namespace bills by the hour.
+budget_contact_emails = ["you@example.com"]
+budget_amount         = 30
+budget_start_date     = "2026-11-01T00:00:00Z"
+
+# Phase 1 leaves these off. Phase 2 (scripts/build-and-deploy.sh) sets them.
+deploy_worker = false
+image         = null
+
+# What the deployed worker does (lesson steps 2 and 3).
+worker_queue                = "orders"
+worker_use_sessions         = false
+worker_mode                 = "idempotent"
+worker_lock_renewal_seconds = 300
+worker_slow_every           = 0
