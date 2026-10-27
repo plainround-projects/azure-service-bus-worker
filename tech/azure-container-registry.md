@@ -131,6 +131,27 @@ resource "azurerm_container_registry" "this" {
 - `anonymous_pull_enabled = false`: `anonymous_pull_enabled`: Whether anyone can pull images without signing in. Here: `false`.
 - Closing line: `}` ends the block opened above.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `infra/environments/dev/main.tf` | 16, 44, 47, 119 to 122, 146 | [terraform.md](terraform.md) |
+| `scripts/build-and-deploy.sh` | 2 to 3, 11 to 12, 15, 18, 23 | [bash.md](bash.md) |
+| `infra/environments/dev/outputs.tf` | 21 to 23, 26 to 28 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/outputs.tf` | 3, 7 to 8, 12 to 13 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/variables.tf` | 27, 54, 58 to 59 | [terraform.md](terraform.md) |
+| `infra/environments/dev/tests/dev.tftest.hcl` | 15, 93, 191 | [terraform.md](terraform.md) |
+| `infra/environments/dev/variables.tf` | 45, 68, 74 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/tests/container_registry.tftest.hcl` | 13 to 14, 22 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/variables.tf` | 7, 12, 33 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/tests/worker_app.tftest.hcl` | 12, 57 to 58 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/main.tf` | 23 to 24 | [azure-container-apps.md](azure-container-apps.md) |
+| `Makefile` | 125 | [make.md](make.md) |
+| `scripts/provision.sh` | 2 | [bash.md](bash.md) |
+
 ## Try it yourself
 
 Run the module's tests.

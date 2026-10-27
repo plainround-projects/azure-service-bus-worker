@@ -138,6 +138,26 @@ resource "azurerm_log_analytics_workspace" "this" {
 - `tags                = var.tags`: `tags`: Tags are name/value labels attached to the thing. They do not change behavior; they identify the owner, project and environment and make cost reports readable. Here: the input variable `tags` (Tags applied to the workspace).
 - Closing line: `}` ends the block opened above.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `infra/environments/dev/main.tf` | 76 to 77, 109, 142 | [terraform.md](terraform.md) |
+| `infra/modules/log_analytics/outputs.tf` | 3, 8, 12 to 13 | [terraform.md](terraform.md) |
+| `infra/environments/dev/outputs.tf` | 46 to 48 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/main.tf` | 35 to 37 | [azure-service-bus.md](azure-service-bus.md) |
+| `infra/environments/dev/tests/dev.tftest.hcl` | 21 | [terraform.md](terraform.md) |
+| `infra/modules/log_analytics/tests/log_analytics.tftest.hcl` | 13 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/tests/servicebus.tftest.hcl` | 7 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/variables.tf` | 44 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/main.tf` | 5 | [azure-container-apps.md](azure-container-apps.md) |
+| `infra/modules/worker_app/tests/worker_app.tftest.hcl` | 8 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/variables.tf` | 21 | [terraform.md](terraform.md) |
+| `src/order_worker/infrastructure/logging.py` | 1 | [python.md](python.md) |
+
 ## Try it yourself
 
 Run the namespace module's tests, including no alert without recipients.

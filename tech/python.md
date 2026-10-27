@@ -5920,6 +5920,18 @@ What happens, step by step:
 - If `__name__` equals `'__main__'`:
   - Raises `SystemExit(main())`.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `.github/workflows/ci.yml` | 18 to 20, 36 to 38 | [github-actions.md](github-actions.md) |
+| `Dockerfile` | 4, 7, 14, 25 | [docker.md](docker.md) |
+| `Makefile` | 3 to 5 | [make.md](make.md) |
+| `pyproject.toml` | 10 | [pyproject-toml.md](pyproject-toml.md) |
+
 ## Try it yourself
 
 Check which Python the project's virtual environment uses.

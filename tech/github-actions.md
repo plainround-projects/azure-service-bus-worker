@@ -302,6 +302,17 @@ Downloads the code.
 
 `make docker-smoke` builds the image and runs the smoke-test script: the container runs as a non-root user, the packaged SQL works, and a missing configuration makes the worker fail at once.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `.checkov.yaml` | 6, 12 | [checkov.md](checkov.md) |
+| `.dockerignore` | 4 | [docker.md](docker.md) |
+| `.tflint.hcl` | 14 | [tflint.md](tflint.md) |
+
 ## Try it yourself
 
 List the actions used.

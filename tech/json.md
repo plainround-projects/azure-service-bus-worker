@@ -60,6 +60,24 @@ POISON_BODY = json.dumps({"orderId": "o-bad", "customerId": "c07", "seq": 51, "a
 
 The poison command is valid JSON with an invalid value: `"amount": "abc"` is a string where a number is required. That is why it can be parsed but never accepted.
 
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `src/order_worker/domain/commands.py` | 3, 25, 38, 42 to 46, 85 | [python.md](python.md) |
+| `src/order_worker/infrastructure/logging.py` | 1 to 3, 13, 16, 26, 30 | [python.md](python.md) |
+| `src/order_worker/domain/repair.py` | 3, 19 to 25 | [python.md](python.md) |
+| `tests/unit/domain/test_commands_ordering_and_repair.py` | 1, 14, 41, 95, 100 | [pytest.md](pytest.md) |
+| `tests/unit/application/test_produce_replay_and_check.py` | 1, 22, 31, 44 | [pytest.md](pytest.md) |
+| `tests/e2e/test_lesson_scenarios.py` | 3, 62, 126 | [pytest.md](pytest.md) |
+| `tests/unit/application/test_run_worker.py` | 2, 10, 101 | [pytest.md](pytest.md) |
+| `tests/unit/infrastructure/test_settings_logging_clock_shutdown.py` | 1, 68, 79 | [pytest.md](pytest.md) |
+| `tests/unit/application/test_handle_delivery.py` | 1, 12 | [pytest.md](pytest.md) |
+| `tests/unit/interfaces/test_clis.py` | 3, 99 | [pytest.md](pytest.md) |
+| `.editorconfig` | 11 | [editorconfig.md](editorconfig.md) |
+
 ## Try it yourself
 
 Repair the poison command.

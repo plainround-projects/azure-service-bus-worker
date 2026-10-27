@@ -75,6 +75,17 @@ audit: $(STAMP) ## check the locked dependencies for known vulnerabilities
 
 The locks were generated with `uv pip compile pyproject.toml --generate-hashes --python-version 3.12 -o requirements.lock` (and with `--extra dev` for the dev lock). `--python-version 3.12` makes the result valid for the oldest supported Python.
 
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `Makefile` | 8, 22 to 25, 98 | [make.md](make.md) |
+| `Dockerfile` | 8 to 9, 12 | [docker.md](docker.md) |
+| `.github/workflows/ci.yml` | 39 | [github-actions.md](github-actions.md) |
+| `pyproject.toml` | 25 | [pyproject-toml.md](pyproject-toml.md) |
+
 ## Try it yourself
 
 Look at the first lines of the lock file.

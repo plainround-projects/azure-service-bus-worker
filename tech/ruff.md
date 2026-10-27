@@ -51,6 +51,15 @@ lint: $(STAMP) ## ruff, mypy, import-linter, shellcheck, terraform fmt, tflint
 
 `ruff check .` runs the linter; `ruff format --check .` only reports files that would change. Neither modifies files. `make format` runs the fixing versions.
 
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `Makefile` | 67 to 69, 78 to 80 | [make.md](make.md) |
+| `pyproject.toml` | 22, 38, 43, 46 | [pyproject-toml.md](pyproject-toml.md) |
+
 ## Try it yourself
 
 Check the installed version.

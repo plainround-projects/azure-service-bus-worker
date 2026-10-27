@@ -64,6 +64,17 @@ _UNSETTLED = (
 
 `azure-core` and `azure-servicebus` raise errors for locks that expired or connections that dropped. The adapter groups those that mean "this message is not settled" in one tuple and maps them to `LockLostError`.
 
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `src/order_worker/infrastructure/servicebus.py` | 1, 6, 108 | [azure-servicebus.md](azure-servicebus.md) |
+| `src/order_worker/infrastructure/wiring.py` | 3, 14 | [python.md](python.md) |
+| `infra/modules/worker_app/main.tf` | 16 | [azure-container-apps.md](azure-container-apps.md) |
+| `pyproject.toml` | 14 | [pyproject-toml.md](pyproject-toml.md) |
+
 ## Try it yourself
 
 Confirm the pinned versions.

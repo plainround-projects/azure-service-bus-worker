@@ -343,6 +343,19 @@ CMD ["order-worker"]
 
 `CMD ["order-worker"]` is the command the container runs when it starts: the worker program installed in the virtual environment.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `scripts/docker-smoke.sh` | 4, 7 to 11, 15 to 16, 19 | [bash.md](bash.md) |
+| `Makefile` | 16, 110, 115 to 119 | [make.md](make.md) |
+| `scripts/build-and-deploy.sh` | 4, 16, 19 to 20 | [bash.md](bash.md) |
+| `.checkov.yaml` | 1, 8 | [checkov.md](checkov.md) |
+| `.github/workflows/ci.yml` | 32, 47 | [github-actions.md](github-actions.md) |
+
 ## Try it yourself
 
 See the two stages and the pinned base.

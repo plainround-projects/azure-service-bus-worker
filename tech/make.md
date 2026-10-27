@@ -636,6 +636,24 @@ clean:
 - `rm -rf $(VENV) .pytest_cache .mypy_cache .ruff_cache .import_linter_cache .coverage dist data`: Deletes the environment, caches, build folder and the local data folder.
 - `find infra -name .terraform -type d -prune -exec rm -rf {} +`: Finds every folder named `.terraform` under `infra`, does not descend into it (`-prune`) and deletes it (`-exec rm -rf {} +` runs `rm` on all matches).
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `.github/workflows/ci.yml` | 28 to 29, 40, 47 | [github-actions.md](github-actions.md) |
+| `tests/integration/test_azure_live.py` | 3 to 4 | [pytest.md](pytest.md) |
+| `.editorconfig` | 14 | [editorconfig.md](editorconfig.md) |
+| `infra/environments/dev/variables.tf` | 45 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/variables.tf` | 86 | [terraform.md](terraform.md) |
+| `pyproject.toml` | 67 | [pyproject-toml.md](pyproject-toml.md) |
+| `scripts/provision.sh` | 39 | [bash.md](bash.md) |
+| `sql/003_queries.sql` | 1 | [sql.md](sql.md) |
+| `sql/migrations/001_processed_messages.sql` | 1 | [sql.md](sql.md) |
+| `src/order_worker/infrastructure/sqlite_ledger.py` | 18 | [sqlite.md](sqlite.md) |
+
 ## Try it yourself
 
 Print the menu from the `##` comments.

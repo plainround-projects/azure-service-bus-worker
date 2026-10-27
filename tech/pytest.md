@@ -5104,6 +5104,18 @@ What happens, step by step:
 - Checks that `simulate_cli.main(['--expect', expect, *args])` equals `code`.
 - Checks that `capsys.readouterr().out` is true.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `Makefile` | 85, 89, 92, 95, 147 | [make.md](make.md) |
+| `pyproject.toml` | 20 to 21, 61 | [pyproject-toml.md](pyproject-toml.md) |
+| `.dockerignore` | 6 | [docker.md](docker.md) |
+| `.gitignore` | 7 | [git.md](git.md) |
+
 ## Try it yourself
 
 Run the domain tests.

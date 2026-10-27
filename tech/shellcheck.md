@@ -31,6 +31,15 @@ When a script does `source other.sh`, ShellCheck cannot know which file that is 
 
 `-x` follows `source` lines; `-P SCRIPTDIR` says "look for sourced files next to the script that sources them", which is where `lib.sh` is. The shell glob `scripts/*.sh` expands to every script. In this repository ShellCheck found two things during the build: `grep | wc -l` where `grep -c` is simpler (SC2126, rewritten) and a declare-and-assign that hides an error code (SC2155, split into two lines).
 
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `Makefile` | 67, 72 | [make.md](make.md) |
+| `.github/workflows/ci.yml` | 14 | [github-actions.md](github-actions.md) |
+
 ## Try it yourself
 
 Lint every script at the strictest severity.

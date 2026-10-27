@@ -58,6 +58,15 @@ allow_indirect_imports = true
 
 The first contract is `type = "layers"`, listed from the top: `interfaces`, `infrastructure`, `application`, `domain`. A higher layer may import a lower one; a lower one must never import a higher one. The second contract, `forbidden`, says `domain` and `application` may not import `azure` or `sqlite3`: the rules and the use cases know nothing about the broker or the database, which is what lets the simulated broker and the tests replace them. The third forbids `interfaces` from importing `azure` directly. It has `allow_indirect_imports = true` because the interfaces layer reaches the SDK through the infrastructure layer on purpose.
 
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `pyproject.toml` | 24, 78, 82, 92, 98 | [pyproject-toml.md](pyproject-toml.md) |
+| `Makefile` | 67, 71 | [make.md](make.md) |
+
 ## Try it yourself
 
 Check the three contracts.

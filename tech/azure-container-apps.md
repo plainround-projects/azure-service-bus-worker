@@ -416,6 +416,18 @@ resource "azurerm_container_app" "this" {
 
 - Closing line: `}` ends the block opened above.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `infra/modules/worker_app/tests/worker_app.tftest.hcl` | 24, 29, 34, 43, 52, 57, 66, 71 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/outputs.tf` | 2 to 3, 8 | [terraform.md](terraform.md) |
+| `scripts/build-and-deploy.sh` | 30 to 31 | [bash.md](bash.md) |
+| `infra/environments/dev/tests/dev.tftest.hcl` | 26 | [terraform.md](terraform.md) |
+
 ## Try it yourself
 
 Run the module's tests (no ingress, no secret blocks, probes, refused connection strings).

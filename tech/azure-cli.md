@@ -76,6 +76,29 @@ fi
 
 The producer, the local worker and the replay tool do not call `az` at all. They use `DefaultAzureCredential`, which falls through to the Azure CLI sign-in (see `azure-identity.md`).
 
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `scripts/build-and-deploy.sh` | 3, 8, 18, 23, 30 to 31 | [bash.md](bash.md) |
+| `scripts/provision.sh` | 8, 18, 24 to 28 | [bash.md](bash.md) |
+| `Makefile` | 94, 122, 131 | [make.md](make.md) |
+| `infra/environments/dev/variables.tf` | 2, 12, 56 | [terraform.md](terraform.md) |
+| `infra/environments/dev/outputs.tf` | 22, 47 | [terraform.md](terraform.md) |
+| `infra/environments/dev/terraform.tfvars.example` | 1, 10 | [terraform.md](terraform.md) |
+| `scripts/show-queues.sh` | 5, 12 | [bash.md](bash.md) |
+| `scripts/teardown.sh` | 6, 14 | [bash.md](bash.md) |
+| `infra/modules/container_registry/outputs.tf` | 7 | [terraform.md](terraform.md) |
+| `infra/modules/log_analytics/outputs.tf` | 12 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/outputs.tf` | 2 | [terraform.md](terraform.md) |
+| `pyproject.toml` | 67 | [pyproject-toml.md](pyproject-toml.md) |
+| `scripts/env.sh` | 9 | [bash.md](bash.md) |
+| `scripts/lib.sh` | 21 | [bash.md](bash.md) |
+| `scripts/run-workers.sh` | 2 | [bash.md](bash.md) |
+| `src/order_worker/infrastructure/wiring.py` | 10 | [python.md](python.md) |
+
 ## Try it yourself
 
 Check the version.

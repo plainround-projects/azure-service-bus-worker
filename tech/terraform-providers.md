@@ -191,6 +191,48 @@ terraform {
 - `# backend "azurerm" {}`: Comment for the reader: backend "azurerm" {}
 - Closing lines: `}` end the blocks opened above.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `infra/environments/dev/main.tf` | 70, 80 to 81, 89 to 90, 98 to 99, 107 to 108, 123 to 124, 140 to 141 | [terraform.md](terraform.md) |
+| `infra/environments/dev/tests/dev.tftest.hcl` | 1, 4 to 5, 10, 15, 21, 26, 34, 41, 48, 57, 191, 196 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/main.tf` | 1, 18, 22, 34 to 36, 48, 67, 72, 88 | [azure-service-bus.md](azure-service-bus.md) |
+| `infra/modules/servicebus/tests/servicebus.tftest.hcl` | 1, 18, 23, 32, 37, 46, 55, 64, 77 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/tests/worker_app.tftest.hcl` | 1, 24, 29, 34, 43, 52, 57, 66, 71 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/outputs.tf` | 3, 8, 13, 18, 23 | [terraform.md](terraform.md) |
+| `infra/modules/user_assigned_identity/outputs.tf` | 3, 8, 13, 18 | [terraform.md](terraform.md) |
+| `.tflint.hcl` | 1, 11, 14 | [tflint.md](tflint.md) |
+| `infra/modules/budget/versions.tf` | 4 to 6 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/outputs.tf` | 3, 8, 13 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/versions.tf` | 4 to 6 | [terraform.md](terraform.md) |
+| `infra/modules/log_analytics/outputs.tf` | 3, 8, 13 | [terraform.md](terraform.md) |
+| `infra/modules/log_analytics/versions.tf` | 4 to 6 | [terraform.md](terraform.md) |
+| `infra/modules/role_assignments/tests/role_assignments.tftest.hcl` | 1, 17, 22 | [terraform.md](terraform.md) |
+| `infra/modules/role_assignments/versions.tf` | 4 to 6 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/versions.tf` | 4 to 6 | [terraform.md](terraform.md) |
+| `infra/modules/user_assigned_identity/versions.tf` | 4 to 6 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/main.tf` | 1, 9, 12 | [azure-container-apps.md](azure-container-apps.md) |
+| `infra/modules/worker_app/versions.tf` | 4 to 6 | [terraform.md](terraform.md) |
+| `.gitignore` | 17, 28 | [git.md](git.md) |
+| `infra/modules/budget/tests/budget.tftest.hcl` | 1, 15 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/tests/container_registry.tftest.hcl` | 1, 13 | [terraform.md](terraform.md) |
+| `infra/modules/log_analytics/tests/log_analytics.tftest.hcl` | 1, 13 | [terraform.md](terraform.md) |
+| `infra/modules/user_assigned_identity/tests/user_assigned_identity.tftest.hcl` | 1, 14 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/outputs.tf` | 3, 8 | [terraform.md](terraform.md) |
+| `Makefile` | 104 | [make.md](make.md) |
+| `infra/environments/dev/outputs.tf` | 3 | [terraform.md](terraform.md) |
+| `infra/modules/budget/main.tf` | 1 | [azure-resources-and-budgets.md](azure-resources-and-budgets.md) |
+| `infra/modules/budget/outputs.tf` | 3 | [terraform.md](terraform.md) |
+| `infra/modules/container_registry/main.tf` | 1 | [azure-container-registry.md](azure-container-registry.md) |
+| `infra/modules/log_analytics/main.tf` | 1 | [azure-monitor-log-analytics.md](azure-monitor-log-analytics.md) |
+| `infra/modules/role_assignments/main.tf` | 1 | [azure-managed-identity-rbac.md](azure-managed-identity-rbac.md) |
+| `infra/modules/role_assignments/outputs.tf` | 4 | [terraform.md](terraform.md) |
+| `infra/modules/user_assigned_identity/main.tf` | 1 | [azure-managed-identity-rbac.md](azure-managed-identity-rbac.md) |
+
 ## Try it yourself
 
 See the locked versions.

@@ -130,6 +130,26 @@ resource "azurerm_consumption_budget_subscription" "this" {
 - `contact_emails = var.contact_emails`: `contact_emails`: The e-mail addresses that receive the alert. Here: the input variable `contact_emails` (Addresses that receive the alerts).
 - Closing lines: `}` end the blocks opened above.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `infra/environments/dev/main.tf` | 19, 70, 80 to 81, 89 to 90, 98 to 99, 107 to 108, 123 to 124, 140 to 141, 168 to 176 | [terraform.md](terraform.md) |
+| `infra/environments/dev/variables.tf` | 124 to 125, 130 to 131, 136 to 137, 142 to 143 | [terraform.md](terraform.md) |
+| `infra/environments/dev/tests/dev.tftest.hcl` | 177, 181, 184, 191, 196 | [terraform.md](terraform.md) |
+| `infra/modules/budget/tests/budget.tftest.hcl` | 4, 15 to 16, 30 | [terraform.md](terraform.md) |
+| `scripts/provision.sh` | 3, 23, 30 to 31 | [bash.md](bash.md) |
+| `infra/environments/dev/terraform.tfvars.example` | 17 to 19 | [terraform.md](terraform.md) |
+| `infra/modules/budget/variables.tf` | 7, 27, 42 | [terraform.md](terraform.md) |
+| `infra/environments/dev/outputs.tf` | 3 | [terraform.md](terraform.md) |
+| `infra/modules/budget/outputs.tf` | 3 | [terraform.md](terraform.md) |
+| `scripts/teardown.sh` | 2 | [bash.md](bash.md) |
+| `src/order_worker/application/run_worker.py` | 50 | [python.md](python.md) |
+| `tests/unit/application/test_run_worker.py` | 49 | [pytest.md](pytest.md) |
+
 ## Try it yourself
 
 Run the budget tests.

@@ -172,6 +172,28 @@ resource "azurerm_user_assigned_identity" "this" {
 - `tags                = var.tags`: `tags`: Tags are name/value labels attached to the thing. They do not change behavior; they identify the owner, project and environment and make cost reports readable. Here: the input variable `tags` (Tags applied to the identity).
 - Closing line: `}` ends the block opened above.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `infra/modules/user_assigned_identity/outputs.tf` | 3, 7 to 8, 12 to 13, 18 | [terraform.md](terraform.md) |
+| `infra/environments/dev/main.tf` | 86, 95, 151 | [terraform.md](terraform.md) |
+| `infra/environments/dev/outputs.tf` | 37, 57, 66 | [terraform.md](terraform.md) |
+| `infra/environments/dev/tests/dev.tftest.hcl` | 48, 57 | [terraform.md](terraform.md) |
+| `infra/modules/user_assigned_identity/tests/user_assigned_identity.tftest.hcl` | 10, 14 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/tests/worker_app.tftest.hcl` | 14, 29 | [terraform.md](terraform.md) |
+| `scripts/lib.sh` | 27, 33 | [bash.md](bash.md) |
+| `infra/modules/worker_app/main.tf` | 16 | [azure-container-apps.md](azure-container-apps.md) |
+| `infra/modules/worker_app/variables.tf` | 73 | [terraform.md](terraform.md) |
+| `scripts/env.sh` | 9 | [bash.md](bash.md) |
+| `scripts/provision.sh` | 2 | [bash.md](bash.md) |
+| `src/order_worker/infrastructure/settings.py` | 67 | [python.md](python.md) |
+| `src/order_worker/infrastructure/wiring.py` | 10 | [python.md](python.md) |
+| `tests/unit/infrastructure/test_servicebus_adapter.py` | 234 | [pytest.md](pytest.md) |
+
 ## Try it yourself
 
 Run the module's tests, including the refused owner role.

@@ -470,6 +470,24 @@ What happens, step by step:
 
 - Calls `self._connection.close()`.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `tests/integration/test_sqlite_ledger.py` | 3, 14, 34 to 36, 42 to 43, 72, 79, 87, 90, 111, 138 to 140, 146 | [pytest.md](pytest.md) |
+| `Makefile` | 10, 51 | [make.md](make.md) |
+| `pyproject.toml` | 96 | [pyproject-toml.md](pyproject-toml.md) |
+| `sql/003_queries.sql` | 1 | [sql.md](sql.md) |
+| `sql/reset.sql` | 3 | [sql.md](sql.md) |
+| `src/order_worker/infrastructure/scenarios.py` | 18 | [python.md](python.md) |
+| `src/order_worker/interfaces/check_cli.py` | 9 | [python.md](python.md) |
+| `src/order_worker/interfaces/worker_cli.py` | 14 | [python.md](python.md) |
+| `tests/e2e/test_lesson_scenarios.py` | 17 | [pytest.md](pytest.md) |
+| `tests/unit/interfaces/test_clis.py` | 10 | [pytest.md](pytest.md) |
+
 ## Try it yourself
 
 Check the shell's SQLite version.

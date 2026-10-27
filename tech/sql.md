@@ -368,6 +368,20 @@ DROP TABLE IF EXISTS processed_messages;
 
 `DROP TABLE IF EXISTS processed_messages;` deletes the step 3 table, if it exists, so that the naive mode can run again without the idempotence table.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `Makefile` | 51 to 61, 64 | [make.md](make.md) |
+| `src/order_worker/infrastructure/sqlite_ledger.py` | 16, 21 to 23 | [sqlite.md](sqlite.md) |
+| `.github/workflows/ci.yml` | 43 | [github-actions.md](github-actions.md) |
+| `Dockerfile` | 2 | [docker.md](docker.md) |
+| `scripts/docker-smoke.sh` | 24 | [bash.md](bash.md) |
+| `tests/integration/test_sqlite_ledger.py` | 147 | [pytest.md](pytest.md) |
+
 ## Try it yourself
 
 Insert the same message id twice; the second insert changes nothing.

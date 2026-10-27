@@ -47,6 +47,15 @@ disallow_untyped_calls = false
 
 Return types such as `-> Handled` on the delivery handler, `Delivery | None` on `receive` (a receiver may find nothing), and the `Protocol` ports: if an adapter's method differs from the port's signature, mypy says so even though Python would not. The tests' stubs of the Service Bus SDK carry a few `# type: ignore[...]` comments, each with an error code, where a stub is deliberately not the real class.
 
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `pyproject.toml` | 23, 49, 55 | [pyproject-toml.md](pyproject-toml.md) |
+| `Makefile` | 67, 70 | [make.md](make.md) |
+
 ## Try it yourself
 
 Run the type checker over source and tests.

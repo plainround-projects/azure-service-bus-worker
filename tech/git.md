@@ -151,6 +151,17 @@ infra/modules/*/.terraform.lock.hcl
 - `# Only the environment pins provider versions (its lock file is committed); module test runs create throwaway locks.`: Comment for the reader: Only the environment pins provider versions (its lock file is committed); module test runs create throwaway locks.
 - `infra/modules/*/.terraform.lock.hcl`: Test runs of a module create a throwaway provider lock file in the module folder. Only the environment's lock file is the real one (it is committed), so these are ignored.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `infra/environments/dev/terraform.tfvars.example` | 1 to 2 | [terraform.md](terraform.md) |
+| `.dockerignore` | 1 | [docker.md](docker.md) |
+| `scripts/provision.sh` | 24 | [bash.md](bash.md) |
+
 ## Try it yourself
 
 Read the history.

@@ -93,6 +93,17 @@ plugin "azurerm" {
 
 The `azurerm` plug-in is a separate rule set for the Azure provider. It knows the valid values of Azure settings (for example which virtual machine sizes exist) and reports a typo in a value that plain Terraform would only discover when Azure rejects it during `apply`. `version = "0.28.0"` pins the rule set so that a new release cannot change the result of a lint run, and `source` says where to download it (a GitHub project).
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `Makefile` | 67, 74 to 76 | [make.md](make.md) |
+| `.github/workflows/ci.yml` | 14, 25 to 27 | [github-actions.md](github-actions.md) |
+| `.gitignore` | 25 | [git.md](git.md) |
+
 ## Try it yourself
 
 Check the installed version.

@@ -345,6 +345,41 @@ resource "azurerm_monitor_metric_alert" "dead_letters" {
 - `action_group_id = azurerm_monitor_action_group.dead_letters[0].id`: `action_group_id`: The id of the action group to notify. Here: the resource `azurerm_monitor_action_group.dead_letters`.
 - Closing lines: `}` end the blocks opened above.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `infra/environments/dev/tests/dev.tftest.hcl` | 5, 10, 34, 41, 80, 124, 138, 191 | [terraform.md](terraform.md) |
+| `infra/environments/dev/main.tf` | 32, 38, 56, 62, 103 to 104, 152 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/outputs.tf` | 3, 8, 12 to 13, 18, 23 | [terraform.md](terraform.md) |
+| `tests/unit/infrastructure/test_servicebus_adapter.py` | 1, 7 to 8, 17, 179, 234 | [pytest.md](pytest.md) |
+| `infra/environments/dev/outputs.tf` | 7 to 8, 11 to 13, 18 | [terraform.md](terraform.md) |
+| `infra/modules/servicebus/tests/servicebus.tftest.hcl` | 18, 23, 32, 37, 46 | [terraform.md](terraform.md) |
+| `infra/modules/role_assignments/tests/role_assignments.tftest.hcl` | 7, 22, 34, 66 | [terraform.md](terraform.md) |
+| `src/order_worker/infrastructure/servicebus.py` | 1, 7, 16, 109 | [azure-servicebus.md](azure-servicebus.md) |
+| `pyproject.toml` | 8, 15, 67 | [pyproject-toml.md](pyproject-toml.md) |
+| `infra/modules/role_assignments/variables.tf` | 31 to 32 | [terraform.md](terraform.md) |
+| `infra/modules/worker_app/tests/worker_app.tftest.hcl` | 15, 105 | [terraform.md](terraform.md) |
+| `src/order_worker/infrastructure/simulation.py` | 1, 90 | [python.md](python.md) |
+| `infra/modules/worker_app/main.tf` | 17 | [azure-container-apps.md](azure-container-apps.md) |
+| `scripts/env.sh` | 7 | [bash.md](bash.md) |
+| `scripts/provision.sh` | 2 | [bash.md](bash.md) |
+| `scripts/show-queues.sh` | 12 | [bash.md](bash.md) |
+| `scripts/teardown.sh` | 15 | [bash.md](bash.md) |
+| `src/order_worker/__init__.py` | 1 | [python.md](python.md) |
+| `src/order_worker/application/ports.py` | 12 | [python.md](python.md) |
+| `src/order_worker/infrastructure/__init__.py` | 1 | [python.md](python.md) |
+| `src/order_worker/infrastructure/settings.py` | 44 | [python.md](python.md) |
+| `src/order_worker/infrastructure/wiring.py` | 5 | [python.md](python.md) |
+| `src/order_worker/interfaces/simulate_cli.py` | 1 | [python.md](python.md) |
+| `tests/integration/test_azure_live.py` | 1 | [pytest.md](pytest.md) |
+| `tests/unit/infrastructure/test_settings_logging_clock_shutdown.py` | 16 | [pytest.md](pytest.md) |
+| `tests/unit/infrastructure/test_simulation.py` | 1 | [pytest.md](pytest.md) |
+| `tests/unit/interfaces/test_clis.py` | 45 | [pytest.md](pytest.md) |
+
 ## Try it yourself
 
 Run the duplicates demo and read the three ledger totals.

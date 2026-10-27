@@ -57,6 +57,15 @@ framework:
 
 `framework:` is a key whose value is a list of three names.
 
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `.github/workflows/ci.yml` | 1 | [github-actions.md](github-actions.md) |
+| `Makefile` | 111 | [make.md](make.md) |
+
 ## Try it yourself
 
 Read the top of the workflow.

@@ -132,6 +132,18 @@ evaluate-variables: true
 
 `evaluate-variables: true` makes checkov work out the values of Terraform variables (from their defaults) before applying rules, so a rule such as "public access must be off" sees `false` instead of the text `var.public_network_access_enabled`.
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `infra/modules/container_registry/main.tf` | 2 to 9 | [azure-container-registry.md](azure-container-registry.md) |
+| `infra/modules/servicebus/main.tf` | 2 to 5 | [azure-service-bus.md](azure-service-bus.md) |
+| `.github/workflows/ci.yml` | 31, 39 to 40 | [github-actions.md](github-actions.md) |
+| `Makefile` | 8, 110 to 111 | [make.md](make.md) |
+
 ## Try it yourself
 
 Run the scan and read the totals.

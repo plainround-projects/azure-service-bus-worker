@@ -831,6 +831,16 @@ Names used here:
 - `send_messages` is the repository's own: no description in the code (defined in `tests/unit/infrastructure/test_servicebus_adapter.py`)
 - `add_message` is the repository's own: no description in the code (defined in `tests/unit/infrastructure/test_servicebus_adapter.py`)
 
+
+### Where else this technology appears
+
+Lines of other files that use this technology are explained line by line in the notes of those files. This table lists where to find them.
+
+| File | Matching lines | Explained in |
+|---|---|---|
+| `tests/unit/infrastructure/test_servicebus_adapter.py` | 7 to 8 | [pytest.md](pytest.md) |
+| `pyproject.toml` | 15 | [pyproject-toml.md](pyproject-toml.md) |
+
 ## Try it yourself
 
 Confirm the pinned versions.
