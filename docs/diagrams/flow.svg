@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="t d">
+<title id="t">One command, and what can go wrong</title>
+<desc id="d">A numbered run of one command, o-c01-010, across four lanes: Operator, Orders queue, Order worker and Ledger. The producer sends it (1), a worker takes it under a 30 second peek-lock (2) and HandleDelivery validates it (3). A body that can never be valid is dead-lettered at once (3x). Otherwise the ledger writes the row (4), the sequence is compared (5) and the message is completed after the commit (6). If the lock expired, complete fails and the message is redelivered, and the ledger skips the repeat (6x). After ten deliveries the queue dead-letters the message itself with MaxDeliveryCountExceeded (7). The operator replays it with order-dlq (8), and order-check prints 1000|10000.0.</desc>
+<style>
+:root{--paper:#ffffff;--ink:#10243d;--mute:#52677f;--accent:#0a6aa8;--good:#19743f;--warn:#8a5a00}
+text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;fill:var(--ink)}
+.title{font-family:Georgia,'Iowan Old Style','Times New Roman',serif;font-size:36px}
+.caption{font-size:16px;fill:var(--mute)}
+.name{font-size:20px;font-weight:600}
+.lane{font-size:17px;font-weight:600}
+.sub{font-size:15px;fill:var(--mute)}
+.label{font-size:15px}
+.tag{font-size:15px;fill:var(--mute)}
+.num{font-size:15px;font-weight:700;fill:var(--paper)}
+.legend{font-size:14px;fill:var(--mute)}
+.t-accent{fill:var(--accent)}
+.t-good{fill:var(--good)}
+.t-warn{fill:var(--warn)}
+.t-ink{fill:var(--ink)}
+.b{font-weight:600}
+.paper{fill:var(--paper);stroke:var(--mute);stroke-opacity:.3}
+.grid{fill:url(#grid)}
+.boundary{fill:var(--mute);fill-opacity:.035;stroke:var(--mute);stroke-opacity:.7;stroke-dasharray:6 5}
+.svc{fill:var(--accent);fill-opacity:.08;stroke:var(--accent);stroke-width:1.25}
+.store{fill:var(--mute);fill-opacity:.1;stroke:var(--mute);stroke-width:1.25}
+.rim{fill:none;stroke:var(--mute);stroke-width:1.25}
+.actor{fill:none;stroke:var(--mute);stroke-width:1.25}
+.slot{fill:var(--accent);fill-opacity:.14;stroke:var(--accent);stroke-width:1}
+.note{fill:var(--warn);fill-opacity:.09;stroke:var(--warn);stroke-width:1}
+.win{fill:var(--good);fill-opacity:.09;stroke:var(--good);stroke-width:1}
+.hair{fill:none;stroke:var(--mute);stroke-opacity:.4;stroke-width:1}
+.zone{fill:var(--accent);fill-opacity:.045;stroke:var(--accent);stroke-width:1.25;stroke-dasharray:6 5}
+.stop{fill:none;stroke:var(--warn);stroke-width:4;stroke-linecap:round}
+.mask{fill:var(--paper)}
+.sync,.async,.read,.fail,.ok{fill:none}
+.sync{stroke:var(--accent);stroke-width:1.75;marker-end:url(#a-sync)}
+.async{stroke:var(--accent);stroke-width:1.75;stroke-dasharray:8 6;marker-end:url(#a-async)}
+.read{stroke:var(--mute);stroke-width:1.75;stroke-linecap:round;stroke-dasharray:1 6;marker-end:url(#a-read)}
+.fail{stroke:var(--warn);stroke-width:2;marker-end:url(#a-fail)}
+.ok{stroke:var(--good);stroke-width:1.75;marker-end:url(#a-ok)}
+.dot{fill:var(--accent)}
+.dot-w{fill:var(--warn)}
+.dot-g{fill:var(--good)}
+.head-sync,.head-async{stroke:var(--accent)}
+.head-sync{fill:var(--accent)}
+.head-async,.head-read{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.head-read{stroke:var(--mute)}
+.head-fail{fill:var(--warn)}
+.head-ok{fill:var(--good)}
+.gridline{fill:none;stroke:var(--mute);stroke-opacity:.09}
+</style>
+<defs>
+<pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path class="gridline" d="M40 0H0V40"/></pattern>
+<marker id="a-sync" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="head-sync" d="M0 0L10 5L0 10z"/></marker>
+<marker id="a-async" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="head-async" d="M1 1L9 5L1 9"/></marker>
+<marker id="a-read" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="head-read" d="M1 1L9 5L1 9"/></marker>
+<marker id="a-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="head-fail" d="M0 0L10 5L0 10z"/></marker>
+<marker id="a-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="head-ok" d="M0 0L10 5L0 10z"/></marker>
+</defs>
+<rect class="paper" x="0.5" y="0.5" width="1199" height="899" rx="16"/>
+<rect class="grid" x="1" y="1" width="1198" height="898" rx="16"/>
+<text class="title" x="48" y="68">One command, and what can go wrong</text>
+<text class="caption" x="48" y="100">One command from send to ledger. Amber rows: poison, an expired lock, and ten deliveries without a complete.</text>
+<rect class="actor" x="400" y="128" width="120" height="48" rx="24"/>
+<text class="lane" x="460" y="158" text-anchor="middle">Operator</text>
+<rect class="svc" x="555" y="128" width="150" height="48" rx="10"/>
+<text class="lane" x="630" y="158" text-anchor="middle">Orders queue</text>
+<rect class="svc" x="735" y="128" width="150" height="48" rx="10"/>
+<text class="lane" x="810" y="158" text-anchor="middle">Order worker</text>
+<rect class="svc" x="930" y="128" width="120" height="48" rx="10"/>
+<text class="lane" x="990" y="158" text-anchor="middle">Ledger</text>
+<path class="hair" d="M460 176V808M630 176V808M810 176V680M990 176V552"/>
+<path class="hair" d="M66 216V792"/>
+<circle class="dot" cx="66" cy="216" r="15"/><text class="num" x="66" y="221" text-anchor="middle">1</text>
+<text class="label b t-ink" x="96" y="212">The producer sends</text>
+<text class="sub" x="96" y="232">o-c01-010, with message_id</text>
+<path class="async" d="M460 216H630"/>
+<text class="label t-accent" x="476" y="206">order-produce</text>
+<circle class="dot" cx="66" cy="280" r="15"/><text class="num" x="66" y="285" text-anchor="middle">2</text>
+<text class="label b t-ink" x="96" y="276">A worker takes the message</text>
+<text class="sub" x="96" y="296">hidden for 30 s, delivery 1</text>
+<path class="async" d="M630 280H810"/>
+<text class="label t-accent" x="646" y="270">peek-lock</text>
+<circle class="dot" cx="66" cy="344" r="15"/><text class="num" x="66" y="349" text-anchor="middle">3</text>
+<text class="label b t-ink" x="96" y="340">HandleDelivery validates</text>
+<text class="sub" x="96" y="360">a valid body goes on</text>
+<rect class="slot" x="804" y="326" width="12" height="36" rx="4"/>
+<text class="label t-accent" x="826" y="349">parse_command</text>
+<circle class="dot-w" cx="66" cy="408" r="15"/><text class="num" x="66" y="413" text-anchor="middle">3x</text>
+<text class="label b t-warn" x="96" y="404">Poison: dead-lettered at once</text>
+<text class="sub" x="96" y="424">InvalidAmount, nothing written</text>
+<path class="fail" d="M810 408H630"/>
+<text class="label t-warn" x="646" y="398">dead_letter</text>
+<circle class="dot" cx="66" cy="472" r="15"/><text class="num" x="66" y="477" text-anchor="middle">4</text>
+<text class="label b t-ink" x="96" y="468">The ledger writes the row</text>
+<text class="sub" x="96" y="488">id into processed_messages</text>
+<path class="sync" d="M810 472H990"/>
+<text class="label t-accent" x="826" y="462">apply()</text>
+<circle class="dot" cx="66" cy="536" r="15"/><text class="num" x="66" y="541" text-anchor="middle">5</text>
+<text class="label b t-ink" x="96" y="532">The sequence is compared</text>
+<text class="sub" x="96" y="552">out of order: logged, applied</text>
+<path class="ok" d="M990 536H810"/>
+<text class="label t-good" x="826" y="526">previous_seq</text>
+<circle class="dot" cx="66" cy="600" r="15"/><text class="num" x="66" y="605" text-anchor="middle">6</text>
+<text class="label b t-ink" x="96" y="596">Complete, after the commit</text>
+<text class="sub" x="96" y="616">the message leaves the queue</text>
+<path class="sync" d="M810 600H630"/>
+<text class="label t-accent" x="646" y="590">complete</text>
+<circle class="dot-w" cx="66" cy="664" r="15"/><text class="num" x="66" y="669" text-anchor="middle">6x</text>
+<text class="label b t-warn" x="96" y="660">Lock expired: complete fails</text>
+<text class="sub" x="96" y="680">redelivered, the repeat skipped</text>
+<path class="fail" d="M630 664H810"/>
+<text class="label t-warn" x="646" y="654">lock invalid</text>
+<circle class="dot-w" cx="66" cy="728" r="15"/><text class="num" x="66" y="733" text-anchor="middle">7</text>
+<text class="label b t-warn" x="96" y="724">Ten deliveries, no complete</text>
+<text class="sub" x="96" y="744">the queue dead-letters it</text>
+<rect class="slot" x="624" y="710" width="12" height="36" rx="4"/>
+<text class="label t-warn" x="646" y="733">MaxDeliveryCountExceeded</text>
+<circle class="dot-g" cx="66" cy="792" r="15"/><text class="num" x="66" y="797" text-anchor="middle">8</text>
+<text class="label b t-ink" x="96" y="788">The operator replays</text>
+<text class="sub" x="96" y="808">order-dlq: send, then complete</text>
+<path class="async" d="M460 792H630"/>
+<text class="label t-accent" x="476" y="782">resubmit</text>
+<path class="ok" d="M630 792H700"/>
+<rect class="win" x="700" y="772" width="150" height="40" rx="10"/>
+<text class="label b t-good" x="716" y="797">1000|10000.0</text>
+<path class="sync" d="M48 856H112"/><text class="legend" x="124" y="861">sync call</text>
+<path class="async" d="M264 856H328"/><text class="legend" x="340" y="861">async message</text>
+<path class="fail" d="M696 856H760"/><text class="legend" x="772" y="861">failure path</text>
+<path class="ok" d="M928 856H992"/><text class="legend" x="1004" y="861">result</text>
+</svg>

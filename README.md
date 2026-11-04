@@ -7,6 +7,24 @@ An order-processing worker for Azure Service Bus that is made to fail in the thr
 
 Nothing here has been deployed: the Azure subscription does not exist yet. Everything that can be checked without one has been (see [What was verified](#what-was-verified-without-a-subscription)); the rest is a list of commands in `scripts/` that you run once the subscription exists.
 
+## Architecture
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/architecture-dark.svg">
+  <img alt="The producer order-produce sends commands to the queues orders and orders-sessions; the order worker takes them under a 30 second peek-lock, writes the SQLite ledger and then completes; poison and exhausted messages go to the dead letters, and order-dlq replays them." src="docs/diagrams/architecture.svg">
+</picture>
+
+Notice that the ledger is written before the complete, and that the two amber edges, an expired lock and a poison message, are the two failures the demos drill.
+
+## How one run flows
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/flow-dark.svg">
+  <img alt="One command is sent, taken under a peek-lock, validated, written to the ledger and completed; the amber rows show poison, an expired lock and ten deliveries without a complete, and the replay ends at 1000|10000.0." src="docs/diagrams/flow.svg">
+</picture>
+
+The run ends with order-check printing 1000|10000.0 after the replay; the amber rows show what the queue does when the worker cannot complete in time.
+
 ## Prerequisites
 
 | Tool | Version | Why |

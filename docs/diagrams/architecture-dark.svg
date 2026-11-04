@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="880" viewBox="0 0 1200 880" role="img" aria-labelledby="t d">
+<title id="t">A Service Bus worker that fails on purpose</title>
+<desc id="d">The producer script order-produce sends commands to the queues orders and orders-sessions in the Service Bus namespace, using Azure Service Bus Data Sender. The order worker, order-worker or the container app ca-orders-worker, receives them under a peek-lock with Azure Service Bus Data Receiver and writes each to the SQLite ledger before it completes the message. When the lock expires first, the complete call fails and the queue delivers the message again. A poison message or one delivered ten times goes to the dead letters, which the replay tool order-dlq reads and resubmits to the queue with the original message id. The checker order-check reads the ledger. A warning note names the two demos make demo-duplicates and make demo-poison.</desc>
+<style>
+:root{--paper:#0d1117;--ink:#f5f4f8;--mute:#9a96ab;--accent:#6ec8ff;--good:#7ce0a1;--warn:#ffd166}
+text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;fill:var(--ink)}
+.title{font-family:Georgia,'Iowan Old Style','Times New Roman',serif;font-size:36px}
+.caption{font-size:16px;fill:var(--mute)}
+.name{font-size:20px;font-weight:600}
+.lane{font-size:17px;font-weight:600}
+.sub{font-size:15px;fill:var(--mute)}
+.label{font-size:15px}
+.tag{font-size:15px;fill:var(--mute)}
+.num{font-size:15px;font-weight:700;fill:var(--paper)}
+.legend{font-size:14px;fill:var(--mute)}
+.t-accent{fill:var(--accent)}
+.t-good{fill:var(--good)}
+.t-warn{fill:var(--warn)}
+.t-ink{fill:var(--ink)}
+.b{font-weight:600}
+.paper{fill:var(--paper);stroke:var(--mute);stroke-opacity:.3}
+.grid{fill:url(#grid)}
+.boundary{fill:var(--mute);fill-opacity:.035;stroke:var(--mute);stroke-opacity:.7;stroke-dasharray:6 5}
+.svc{fill:var(--accent);fill-opacity:.08;stroke:var(--accent);stroke-width:1.25}
+.store{fill:var(--mute);fill-opacity:.1;stroke:var(--mute);stroke-width:1.25}
+.rim{fill:none;stroke:var(--mute);stroke-width:1.25}
+.actor{fill:none;stroke:var(--mute);stroke-width:1.25}
+.slot{fill:var(--accent);fill-opacity:.14;stroke:var(--accent);stroke-width:1}
+.note{fill:var(--warn);fill-opacity:.09;stroke:var(--warn);stroke-width:1}
+.win{fill:var(--good);fill-opacity:.09;stroke:var(--good);stroke-width:1}
+.hair{fill:none;stroke:var(--mute);stroke-opacity:.4;stroke-width:1}
+.zone{fill:var(--accent);fill-opacity:.045;stroke:var(--accent);stroke-width:1.25;stroke-dasharray:6 5}
+.stop{fill:none;stroke:var(--warn);stroke-width:4;stroke-linecap:round}
+.mask{fill:var(--paper)}
+.sync,.async,.read,.fail,.ok{fill:none}
+.sync{stroke:var(--accent);stroke-width:1.75;marker-end:url(#a-sync)}
+.async{stroke:var(--accent);stroke-width:1.75;stroke-dasharray:8 6;marker-end:url(#a-async)}
+.read{stroke:var(--mute);stroke-width:1.75;stroke-linecap:round;stroke-dasharray:1 6;marker-end:url(#a-read)}
+.fail{stroke:var(--warn);stroke-width:2;marker-end:url(#a-fail)}
+.ok{stroke:var(--good);stroke-width:1.75;marker-end:url(#a-ok)}
+.dot{fill:var(--accent)}
+.dot-w{fill:var(--warn)}
+.dot-g{fill:var(--good)}
+.head-sync,.head-async{stroke:var(--accent)}
+.head-sync{fill:var(--accent)}
+.head-async,.head-read{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.head-read{stroke:var(--mute)}
+.head-fail{fill:var(--warn)}
+.head-ok{fill:var(--good)}
+.gridline{fill:none;stroke:var(--mute);stroke-opacity:.09}
+</style>
+<defs>
+<pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path class="gridline" d="M40 0H0V40"/></pattern>
+<marker id="a-sync" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="head-sync" d="M0 0L10 5L0 10z"/></marker>
+<marker id="a-async" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="head-async" d="M1 1L9 5L1 9"/></marker>
+<marker id="a-read" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="head-read" d="M1 1L9 5L1 9"/></marker>
+<marker id="a-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="head-fail" d="M0 0L10 5L0 10z"/></marker>
+<marker id="a-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="head-ok" d="M0 0L10 5L0 10z"/></marker>
+</defs>
+<rect class="paper" x="0.5" y="0.5" width="1199" height="879" rx="16"/>
+<rect class="grid" x="1" y="1" width="1198" height="878" rx="16"/>
+<text class="title" x="48" y="68">A Service Bus worker that fails on purpose</text>
+<text class="caption" x="48" y="100">Peek-lock, a ledger written before the complete, and a dead-letter queue. Two failures are drilled in amber.</text>
+<rect class="boundary" x="344" y="132" width="328" height="464" rx="14"/>
+<text class="tag" x="360" y="160">Service Bus namespace, Standard</text>
+<rect class="svc" x="368" y="184" width="280" height="108" rx="12"/>
+<text class="name" x="384" y="216">orders-sessions</text>
+<text class="sub" x="384" y="240">one session per customer</text>
+<rect class="slot" x="384" y="252" width="52" height="26" rx="5"/>
+<text class="label t-accent" x="410" y="270" text-anchor="middle">c01</text>
+<rect class="slot" x="442" y="252" width="52" height="26" rx="5"/>
+<text class="label t-accent" x="468" y="270" text-anchor="middle">c02</text>
+<rect class="slot" x="500" y="252" width="52" height="26" rx="5"/>
+<text class="label t-accent" x="526" y="270" text-anchor="middle">c03</text>
+<rect class="svc" x="368" y="324" width="280" height="108" rx="12"/>
+<text class="name" x="384" y="356">orders</text>
+<text class="sub" x="384" y="380">30 s lock, 10 deliveries</text>
+<rect class="slot" x="384" y="392" width="52" height="26" rx="5"/>
+<rect class="slot" x="442" y="392" width="52" height="26" rx="5"/>
+<rect class="slot" x="500" y="392" width="52" height="26" rx="5"/>
+<rect class="svc" x="368" y="488" width="280" height="84" rx="12"/>
+<text class="name" x="384" y="520">Dead letters</text>
+<text class="sub" x="384" y="544">reason and description</text>
+<rect class="svc" x="48" y="282" width="176" height="96" rx="12"/>
+<text class="name" x="64" y="314">Producer</text>
+<text class="sub" x="64" y="338">order-produce</text>
+<text class="sub" x="64" y="360">az login identity</text>
+<rect class="svc" x="48" y="470" width="176" height="96" rx="12"/>
+<text class="name" x="64" y="502">Replay tool</text>
+<text class="sub" x="64" y="526">order-dlq</text>
+<text class="sub" x="64" y="548">fix or drop</text>
+<rect class="svc" x="832" y="324" width="240" height="120" rx="12"/>
+<text class="name" x="848" y="356">Order worker</text>
+<text class="sub" x="848" y="380">order-worker</text>
+<text class="sub" x="848" y="402">ca-orders-worker</text>
+<path class="store" d="M832 532a120 12 0 0 1 240 0v98a120 12 0 0 1 -240 0z"/>
+<path class="rim" d="M832 532a120 12 0 0 0 240 0"/>
+<text class="name" x="952" y="564" text-anchor="middle">Ledger</text>
+<text class="sub" x="952" y="586" text-anchor="middle">SQLite data/orders.db</text>
+<text class="sub" x="952" y="608" text-anchor="middle">processed_messages</text>
+<rect class="svc" x="832" y="700" width="240" height="96" rx="12"/>
+<text class="name" x="848" y="732">Checker</text>
+<text class="sub" x="848" y="756">order-check</text>
+<text class="sub" x="848" y="778">sql/003_queries.sql</text>
+<rect class="note" x="48" y="620" width="272" height="142" rx="10"/>
+<text class="label b t-warn" x="64" y="650">two demos drill these</text>
+<text class="sub" x="64" y="676">lock expiry: duplicates</text>
+<text class="sub" x="64" y="698">make demo-duplicates</text>
+<text class="sub" x="64" y="720">poison: dead letters</text>
+<text class="sub" x="64" y="742">make demo-poison</text>
+<path class="async" d="M224 360H368"/>
+<text class="label t-accent" x="234" y="350">send</text>
+<text class="label t-accent" x="234" y="382">Data Sender</text>
+<path class="async" d="M224 300H320Q332 300 332 288V264Q332 252 344 252H368"/>
+<text class="label t-accent" text-anchor="end" x="322" y="276">session_id</text>
+<path class="async" d="M648 356H832"/>
+<text class="label t-accent" x="684" y="346">peek-lock</text>
+<text class="label t-accent" x="684" y="378">Data Receiver</text>
+<path class="async" d="M648 240H940Q952 240 952 252V324"/>
+<text class="label t-accent" x="684" y="230">session peek-lock</text>
+<path class="fail" d="M832 416H648"/>
+<path class="stop" d="M800 404V428"/>
+<text class="label t-warn" x="684" y="406">lock expired</text>
+<path class="sync" d="M952 444V520"/>
+<text class="label t-accent" x="964" y="478">write, then</text>
+<text class="label t-accent" x="964" y="500">complete</text>
+<path class="fail" d="M392 432V488"/>
+<text class="label t-warn" x="404" y="466">poison, or 10 deliveries</text>
+<path class="read" d="M368 530H224"/>
+<text class="label" x="234" y="520">read</text>
+<path class="async" d="M136 470V428Q136 416 148 416H368"/>
+<text class="label t-accent" x="234" y="440">resubmit</text>
+<text class="label t-accent" x="234" y="462">same id</text>
+<path class="read" d="M952 642V700"/>
+<text class="label" x="964" y="674">read</text>
+<path class="sync" d="M48 836H112"/><text class="legend" x="124" y="841">sync call</text>
+<path class="async" d="M264 836H328"/><text class="legend" x="340" y="841">async message</text>
+<path class="read" d="M520 836H584"/><text class="legend" x="596" y="841">read</text>
+<path class="fail" d="M696 836H760"/><text class="legend" x="772" y="841">failure path</text>
+</svg>

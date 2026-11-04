@@ -36,6 +36,8 @@ The system has three boundaries: the broker (Service Bus), the ledger (SQLite) a
 
 ## Data flow
 
+Drawn versions of this figure and of the walk-through: [the architecture](docs/diagrams/architecture.svg) and [one run](docs/diagrams/flow.svg).
+
 ```mermaid
 flowchart LR
     prod["Producer script<br/>1,000 commands + 1 poison"] -->|"send (Data Sender)"| q["Orders queue<br/>30 s lock, 10 tries"]
